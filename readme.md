@@ -8,6 +8,7 @@ Objective: Develop an app utilizing the MERN stack
 | ------------- | ------------- |
 | Charlie  | Project Manager / API |
 | Ricardo  | Web App  |
+| Ding  | Web App  |
 | Luis  | Database / Front End  |
 | Peyton  | API  |
 | Kiersten  | Mobile App  |
