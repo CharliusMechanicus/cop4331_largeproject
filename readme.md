@@ -28,8 +28,6 @@ API (Node.js) (Express.JS)
 Database (MongoDB)
 
 ### Useful Resources
-
-Useful Resources.
 - [W3Schools](https://www.w3schools.com/)
 
 - [React.js](https://reactjs.org/tutorial/tutorial.html)
