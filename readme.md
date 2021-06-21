@@ -21,8 +21,17 @@ Objective: Develop an app utilizing the MERN stack
 - [ ] Integrate github and Heroku
 - [ ] Come up with Project Title
 
+### MERN Stack Technology
+Web App (React.JS)
+Mobile App (React Native)
+API (Node.js) (Express.JS)
+Database (MongoDB)
 
 ### Useful Resources
 
-For learning HTML, CSS, javascript, php, bootstrap, and more.
+Useful Resources.
 - [W3Schools](https://www.w3schools.com/)
+
+- [React.js](https://reactjs.org/tutorial/tutorial.html)
+
+- [Adobe XD](https://www.adobe.com/products/xd/learn/get-started.html)
