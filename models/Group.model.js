@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const group_schema = new mongoose.schema
-{
+const Group = new mongoose.schema
+({
 	email: {
 		type: String,
 		required: true
@@ -34,10 +34,12 @@ const group_schema = new mongoose.schema
 		{
 			email: {
 				type: String
-			}
+			},
 			status: {
 				type: int
 			}
 		}
 	]
-}
+});
+
+module.exports = mongoose.model('Group', Group);

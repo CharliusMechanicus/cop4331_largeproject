@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const individual_schema = new mongoose.schema
-{
+const Individual = new mongoose.schema
+({
 	email: {
 		type: String,
 		required: true
@@ -40,4 +40,6 @@ const individual_schema = new mongoose.schema
 			}
 		}
 	]
-}
+});
+
+module.exports = mongoose.model('Individual', Individual);
