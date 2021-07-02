@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const get_profile_individual = express.Router();
 const PORT = 4000;
 
+let Group = require(./models/Group.mode.js);
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/get_profile_individual', get_profile_individual);
@@ -19,7 +21,7 @@ app.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
 });
 
-get_profile_individual.route('/').get(function(req, res) {
+get_profile_group.route('/').get(function(req, res) {
   Group.find(function(err, groups) {
       if (err) {
           console.log(err);
