@@ -10,7 +10,7 @@ let Group = require(./models/Group.mode.js);
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/get_profile_individual', get_profile_individual);
+app.use('/get_profile_group', get_profile_individual);
 
 mongoose.connect('mongodb://127.0.0.1:27017/', { useNewUrlParser: true });
 const connection = mongoose.connection;
