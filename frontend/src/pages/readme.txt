@@ -1,0 +1,1 @@
+Put your files for pages constructed from various components (from components folder) in this folder
