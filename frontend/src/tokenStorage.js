@@ -2,13 +2,13 @@
 // THIS TOKEN ORIGINALLY COMES FROM WHEN YOU SUCCESSFULLY LOGIN AND MUST BE PROVIDED TO PROVE U R U
 // AFTER A SUCCESSFUL API CALL, A REFRESHED TOKEN IS PROVIDED (OTHERWISE, COULD EXPIRE)
 
-exports.storeToken = function (tok)
+exports.storeToken = function (token_obj)
 {
     try
     {
-      localStorage.setItem('token_data', tok.access_token);
+      localStorage.setItem('token_data', token_obj.access_token_str);
     }
-    
+
     catch(e)
     {
       console.log(e.message);
@@ -19,11 +19,11 @@ exports.storeToken = function (tok)
 
 exports.retrieveToken = function ()
 {
-    var ud;
+    var access_token_str;
     
     try
     {
-      ud = localStorage.getItem('token_data');
+      access_token_str = localStorage.getItem('token_data');
     }
     
     catch(e)
@@ -31,5 +31,5 @@ exports.retrieveToken = function ()
       console.log(e.message);
     }
     
-    return ud;
+    return access_token_str;
 }

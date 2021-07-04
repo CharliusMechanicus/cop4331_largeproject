@@ -21,8 +21,8 @@ _createToken = function (email_address_str)
   try
   {
     const user = {email_str : email_address_str};
-    const access_token =  jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    var ret = {access_token : access_token};
+    const access_token_str =  jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+    var ret = {access_token_str : access_token_str};
   }
 
   catch(e)
@@ -35,9 +35,9 @@ _createToken = function (email_address_str)
 
 /*************************************** NEXT FUNCTION *******************************************/
 
-exports.isExpired = function(token)
+exports.isExpired = function(access_token_str)
 {
-  var isError = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,
+  var isError = jwt.verify(access_token_str, process.env.ACCESS_TOKEN_SECRET,
                            (err, verifiedJwt) =>
      {
        if(err)
@@ -56,10 +56,11 @@ exports.isExpired = function(token)
 
 /*************************************** NEXT FUNCTION *******************************************/
 
-exports.refresh = function(token)
+exports.refresh = function(access_token_str)
 {
-  var ud = jwt.decode(token, {complete:true});
+  var ud = jwt.decode(access_token_str, {complete:true});
   var email_address_str = ud.payload.email_str;
-
-  return _createToken(email_address_str);
+  var access_token_obj = _createToken(email_address_str);
+  
+  return access_token_obj;
 };
