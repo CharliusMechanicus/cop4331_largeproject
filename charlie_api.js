@@ -35,21 +35,18 @@ exports.setApp = function(app, client)
     
     /*********************************************************************************************/
     
-    // CHECK DATABASE
+    // CHECK DATABASE TO SEE IF CLIENT IS ALREADY REGISTERED
 
     try
     {
       database = client.db();
-    
-      // IF USER IS SIGNING UP AS AN INDIVIDUAL
-      if(!user_isgroup_bool)
-      {
-        database_results_array =
-          await database.collection("individuals").find( {email : user_email_str} ).toArray();
-      }
 
-      // OTHERWISE, USER IS SIGNING UP AS A GROUP
-      else
+      // FIRST, CHECK TO SEE IF CLIENT ALREADY REGISTERED AS AN INDIVIDUAL
+      database_results_array =
+        await database.collection("individuals").find( {email : user_email_str} ).toArray();
+
+      // IF NOT AN INDIVIDUAL, CONTINUE SEARCHING TO SEE IF REGISTERED AS A GROUP
+      if(database_results_array.length === 0)
       {
         database_results_array =
           await database.collection("groups").find( {email : user_email_str} ).toArray();
