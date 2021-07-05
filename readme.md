@@ -17,8 +17,8 @@ Objective: Develop an app utilizing the MERN stack
 ## Task list
 
 - [X] Setup github
-- [ ] Setup Heroku
-- [ ] Integrate github and Heroku
+- [X] Setup Heroku
+- [X] Integrate github and Heroku
 - [ ] Come up with Project Title
 
 ### MERN Stack Technology
