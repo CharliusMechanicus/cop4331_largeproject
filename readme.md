@@ -1,4 +1,4 @@
-# Project Name
+# Kindling
 Objective: Develop an app utilizing the MERN stack
 
 ### COP 4331
