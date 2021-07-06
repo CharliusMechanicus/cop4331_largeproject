@@ -150,7 +150,7 @@ exports.setApp = function(app, client)
       console.log(error.message);
     }
 
-    collection_str = user_exists_in_this_collection(user_email_str, database);
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
 
     /*********************************************************************************************/
 
@@ -158,13 +158,13 @@ exports.setApp = function(app, client)
     if(!collection_str)
     {
       login_success_bool = false;
-      user_isgroup_bool = undefined;
+      user_isgroup_bool = "";
       access_token_str = "";
     }
     
     // OTHERWISE, USER WAS FOUND IN DATABASE
     else
-    {
+    {    
       // CONTINUE WITH PASSWORD VERIFICATION
       try
       {
@@ -184,7 +184,7 @@ exports.setApp = function(app, client)
         else
         {
           login_success_bool = false;
-          user_isgroup_bool = undefined;
+          user_isgroup_bool = "";
           access_token_str = "";
         }
       }
