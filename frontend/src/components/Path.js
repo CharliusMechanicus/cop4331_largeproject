@@ -1,7 +1,9 @@
 /*********************
 |  SCRIPT CONSTANTS  |
 **********************/
-const APP_NAME = 'kindling-lp'; // KINDLING LARGE PROJECT
+
+// MODIFY BACK TO 'kindling-lp'
+const APP_NAME = 'cop-4331-largeproject-dev-env'; // KINDLING LARGE PROJECT
 
 /******************************************************************************/
 
