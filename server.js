@@ -1,4 +1,14 @@
-require('dotenv').config(); // GET ENVIRONMENTAL VARIABLES
+/*************
+|  REQUIRES  |
+**************/
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+/*************
+|  REQUIRES  |
+**************/
+const path = require('path');
 
 /*********************
 |  SCRIPT CONSTANTS  |
@@ -8,10 +18,6 @@ const PORT = process.env.PORT || 5000;
 /*************
 |  REQUIRES  |
 **************/
-const path = require('path');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const charlie_api = require('./charlie_api.js');
 const peyton_api = require('./peyton_api.js');
 
@@ -20,9 +26,10 @@ const peyton_api = require('./peyton_api.js');
 *********************/
 
 const app = express();
+app.set('port', (process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
-app.set('port', (process.env.PORT || 5000));
+
 
 /************************************************************************************************************************/
 
@@ -39,6 +46,8 @@ if(process.env.NODE_ENV === 'production')
 }
 
 /************************************************************************************************************************/
+
+require('dotenv').config(); // GET ENVIRONMENTAL VARIABLES
 
 // CONNECT TO DATABASE WITH CONNECTION STRING
 const url = process.env.MONGODB_URI;
