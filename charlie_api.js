@@ -6,7 +6,7 @@ exports.setApp = function(app, client)
 {
 
   // REGISTER API ENDPOINT
-  // INPUT: JSON OBJECT (email_str, password_str, is_group_bool)
+  // INPUT: JSON OBJECT (email_str, password_str, display_name_str, phone_str, is_group_bool)
   // OUTPUT: JSON OBJECT (success_bool, email_str, is_group_bool)
   app.post('/api/register', async (req, res, next) =>
   {
@@ -17,6 +17,8 @@ exports.setApp = function(app, client)
     let request_body_data;
     let user_email_str;
     let user_password_str;
+    let user_display_name_str;
+    let user_phone_str;
     let user_isgroup_bool;
     
     let database;
@@ -31,6 +33,8 @@ exports.setApp = function(app, client)
     request_body_data = req.body;
     user_email_str = request_body_data.email_str;
     user_password_str = request_body_data.password_str;
+    user_display_name_str = request_body_data.display_name_str;
+    user_phone_str = request_body_data.phone_str;
     user_isgroup_bool = request_body_data.is_group_bool;
     
     /*********************************************************************************************/
@@ -70,7 +74,7 @@ exports.setApp = function(app, client)
           // SIGN THEM UP AS AN INDIVIDUAL
           database.collection("individuals").insertOne(
             individual_obj_factory
-            (user_email_str, user_password_str, "", "", {}, "", {}, 0, new Array) );
+            (user_email_str, user_password_str, user_display_name_str, user_phone_str, {}, "", {}, 0, new Array) );
         }
       
         else
@@ -78,7 +82,7 @@ exports.setApp = function(app, client)
           // SIGN THEM UP AS A GROUP
           database.collection("groups").insertOne(
             group_obj_factory
-            (user_email_str, user_password_str, "", "", {}, "", {}, 0, new Array) );
+            (user_email_str, user_password_str, user_display_name_str, user_phone_str, {}, "", {}, 0, new Array) );
         }
       
         registration_success_bool = true;
