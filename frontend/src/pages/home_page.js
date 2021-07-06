@@ -4,7 +4,7 @@ const home_page = () =>
 {
     return(
         <div>
-            <nav_bar />
+            <header />
         </div>
     );
 };
