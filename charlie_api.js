@@ -165,14 +165,14 @@ exports.setApp = function(app, client)
     // OTHERWISE, USER WAS FOUND IN DATABASE
     else
     {    
-      // CONTINUE WITH PASSWORD VERIFICATION
+      // CONTINUE WITH PASSWORD AND STATUS CODE VERIFICATION
       try
       {
         database_results_array =
           await database.collection(collection_str).find(
-          {email : user_email_str, password : user_password_str} ).toArray();
+          {email : user_email_str, password : user_password_str, ready_status : {$gt : 0}} ).toArray();
         
-        // IF PASSWORD WAS VERIFIED
+        // IF PASSWORD AND STATUS CODE ARE OK
         if(database_results_array.length > 0)
         {
           login_success_bool = true;
@@ -180,7 +180,7 @@ exports.setApp = function(app, client)
           access_token_str = my_token_functions.createToken(user_email_str);
         }
         
-        // OTHERWISE, PASSWORD IS INCORRECT
+        // OTHERWISE, PASSWORD OR STATUS CODE WERE NO GOOD
         else
         {
           login_success_bool = false;
