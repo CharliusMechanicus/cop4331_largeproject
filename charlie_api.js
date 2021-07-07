@@ -10,6 +10,7 @@
 |  register                           |
 |  login                              |
 |  verify_email                       |
+|  get_ready_status                   |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -205,7 +206,7 @@ exports.setApp = function(app, client)
       
       catch(error)
       {
-        console.log(error);
+        console.log(error.message);
       }
     }
     
@@ -297,11 +298,155 @@ exports.setApp = function(app, client)
 
   }); // END VERIFY_EMAIL API ENDPOINT
 
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // GET_READY_STATUS API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, ready_status_int, refreshed_token_str)
+  app.post('/api/get_ready_status', async (req, res, next) =>
+  {
+
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let user_access_token_str;
+
+    // TO RETURN
+    let get_status_success_bool;
+    let user_ready_status_int;
+    let refreshed_token_str;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (success_bool, ready_status_int, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : success_bool,
+            ready_status_int : ready_status_int,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+    
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    user_access_token_str = request_body_data.access_token_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str))
+    {
+      get_status_success_bool = false;
+      user_ready_status_int = -1234;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(get_status_success_bool, user_ready_status_int,
+        refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME CLIENT'S ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      get_status_success_bool = false;
+      user_ready_status_int = -1234;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj =
+        json_response_obj_factory(get_status_success_bool, user_ready_status_int,
+        refreshed_token_str);
+        
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    // OTHERWISE, USER WAS FOUND IN DATABASE
+    else
+    {
+      try
+      {
+        database_results_array =
+          await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+        
+        get_status_success_bool = true;
+        user_ready_status_int = database_results_array[0].ready_status;
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        
+        json_response_obj =
+          json_response_obj_factory(get_status_success_bool, user_ready_status_int,
+          refreshed_token_str);
+      }
+      
+      catch(error)
+      {
+        console.log(error.message);
+        
+        get_status_success_bool = false;
+        user_ready_status_int = -1234;
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        
+        json_response_obj =
+          json_response_obj_factory(get_status_success_bool, user_ready_status_int,
+          refreshed_token_str);
+      }
+    }
+
+    /*********************************************************************************************/
+
+    res.status(200).json(json_response_obj);
+
+  }); // END GET_READY_STATUS API ENDPOINT
+  
   /*********************************** END API ENDPOINTS *****************************************/
 
-  /***************************
-  |  USER-DEFINED FUNCTIONS  |
-  ****************************/
+  /***********************************
+  |   USER-DEFINED FUNCTIONS         |
+  ------------------------------------
+  |  (in order of appearance)        |
+  |                                  |
+  |  individual_obj_factory          |
+  |  group_obj_factory               |
+  |  user_exists_in_this_collection  |
+  |  is_this_collection_a_group      |
+  |  is_token_valid                  |
+  |  create_refreshed_token          |
+  ************************************/
 
   function individual_obj_factory(email_str, pwd_str, display_name_str, phone_str,
     ind_categories_obj, description_str, candidate_group_categories_obj, ready_status_int,
@@ -390,7 +535,7 @@ exports.setApp = function(app, client)
     
     catch(error)
     {
-      console.log(error);
+      console.log(error.message);
     }
     
     return collection_str;
@@ -408,6 +553,56 @@ exports.setApp = function(app, client)
 
     else
       return false;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
+  function is_token_valid(access_token_str)
+  {
+    let my_token_functions = require("./createJWT.js");
+    
+    try
+    {
+      if(my_token_functions.isExpired(access_token_str))
+      {
+        return false;
+      }
+      
+      else
+      {
+        return true;
+      }
+    }
+    
+    catch(error)
+    {
+      console.log(error.message);
+      return false;
+    }
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS AN ACCESS TOKEN STRING DERIVED FROM 'access_token_str' WITH NEW EXPIRATION DATE
+  // IN THE CASE OF SOME SORT OF ERROR, EMPTY STRING IS RETURNED INSTEAD
+  function create_refreshed_token(access_token_str)
+  {
+    let my_token_functions = require("./createJWT.js");
+    let refreshed_token_str;
+    
+    try
+    {
+      refreshed_token_str = my_token_functions.refresh(access_token_str);
+    }
+    
+    catch(error)
+    {
+      console.log(error.message);
+      refreshed_token_str = "";
+    }
+    
+    return refreshed_token_str;
   }
 
 }; // END setApp
