@@ -459,7 +459,7 @@ exports.setApp = function(app, client)
     let json_response_obj;
 
     let database;
-    let database_results_array;
+    let update_report_doc;
     let collection_str;  
 
     /********************
@@ -555,14 +555,26 @@ exports.setApp = function(app, client)
       try
       {
         // UPDATE USER'S INFORMATION ONLY IF THEIR 'ready_status' IS 1
-        database.collection(collection_str).updateOne( {email : user_email_str, ready_status : 1},
-          { $set : {individual_categories : individual_categories_obj},
-            $set : {description : user_description_str},
-            $set : {candidate_group_categories : candidate_group_categories_obj},
-            $set : {ready_status : 2} } );
-            
-        success_bool = true;
-        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        update_report_doc =
+          database.collection(collection_str).updateOne( {email : user_email_str, ready_status : 1},
+          { $set : {individual_categories : individual_categories_obj,
+                    description : user_description_str,
+                    candidate_group_categories : candidate_group_categories_obj,
+                    ready_status : 2} } );
+
+        // IF USER'S 'ready_status' WAS A 1 AND PROFILE INFO WAS UPDATED
+        if(update_report_doc.modifiedCount === 1)
+        {
+          success_bool = true;
+          refreshed_token_str = create_refreshed_token(user_access_token_str);
+        }
+        
+        // OTHERWISE, USER'S 'ready_status' WAS SOME VALUE OTHER THAN A 1
+        else
+        {
+          success_bool = false;
+          refreshed_token_str = create_refreshed_token(user_access_token_str);
+        }
       }
       
       catch(error)
