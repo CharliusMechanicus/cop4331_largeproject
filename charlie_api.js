@@ -11,6 +11,7 @@
 |  login                              |
 |  verify_email                       |
 |  get_ready_status                   |
+|  initialize_profile_individual      |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -432,7 +433,154 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END GET_READY_STATUS API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // INITIALIZE_PROFILE_INDIVIDUAL API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, individual_categories_obj, description_str,
+  //   candidate_group_categories_obj, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, refreshed_token_str)
+  app.post('/api/initialize_profile_individual', async (req, res, next) =>
+  {
   
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let individual_categories_obj;
+    let user_description_str;
+    let candidate_group_categories_obj;
+    let user_access_token_str;
+
+    // TO RETURN
+    let success_bool;
+    let refreshed_token_str;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;  
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (success_bool, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : success_bool,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    individual_categories_obj = request_body_data.individual_categories_obj;
+    user_description_str = request_body_data.description_str;
+    candidate_group_categories_obj = request_body_data.candidate_group_categories_obj;
+    user_access_token_str = request_body_data.access_token_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str))
+    {
+      success_bool = false;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(success_bool, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME CLIENT'S ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      success_bool = false;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj =
+        json_response_obj_factory(success_bool, refreshed_token_str);
+        
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    // OTHERWISE, USER WAS FOUND IN DATABASE
+    else
+    {
+      // IF USER IS ACTUALLY A GROUP LOOKING FOR INDIVIDUALS
+      if(is_this_collection_a_group(collection_str))
+      {
+        success_bool = false;
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        
+        json_response_obj =
+          json_response_obj_factory(success_bool, refreshed_token_str);
+        
+        res.status(200).json(json_response_obj);
+        return;
+      }
+
+      /***************************************************************************/
+
+      // AT THIS POINT, WE CAN ASSUME THE USER IS AN INDIVIDUAL
+      try
+      {
+        // UPDATE USER'S INFORMATION ONLY IF THEIR 'ready_status' IS 1
+        database.collection(collection_str).updateOne( {email : user_email_str, ready_status : 1},
+          { $set : {individual_categories : individual_categories_obj},
+            $set : {description : user_description_str},
+            $set : {candidate_group_categories : candidate_group_categories_obj},
+            $set : {ready_status : 2} } );
+            
+        success_bool = true;
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+      }
+      
+      catch(error)
+      {
+        console.log(error.message);
+        
+        success_bool = false;
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+      }
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = json_response_obj_factory(success_bool, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END INITIALIZE_PROFILE_INDIVIDUAL API ENDPOINT
+
   /*********************************** END API ENDPOINTS *****************************************/
 
   /***********************************
