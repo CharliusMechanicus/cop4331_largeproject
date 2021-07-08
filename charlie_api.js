@@ -555,7 +555,7 @@ exports.setApp = function(app, client)
       try
       {
         // UPDATE USER'S INFORMATION ONLY IF THEIR 'ready_status' IS 1
-        update_report_doc =
+        update_report_doc = await
           database.collection(collection_str).updateOne( {email : user_email_str, ready_status : 1},
           { $set : {individual_categories : individual_categories_obj,
                     description : user_description_str,
