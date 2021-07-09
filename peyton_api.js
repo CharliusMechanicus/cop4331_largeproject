@@ -5,7 +5,7 @@ exports.setApp = function(app, client)
   // -- GET_PROFILE_INDIVIDUAL --
     app.post('/api/get_profile_individual', async (req, res, next) =>
     {
-    let request_body_data;
+      let request_body_data;
   	let user_email_str;
   	let user_access_token_str;
 
@@ -27,7 +27,7 @@ exports.setApp = function(app, client)
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-  			      description_str : description_str,
+  			description_str : description_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -70,17 +70,8 @@ exports.setApp = function(app, client)
         console.log(error.message);
       }
 
-  	try
-    {
-      console.log("trying user_exists_in_this_collection");
-      collection_str = await user_exists_in_this_collection(user_email_str, database);
-    }
-    catch(error)
-    {
-      console.log("failed user_exists_in_this_collection");
-      json_response_obj = error_yes_token();
-    }
-    console.log("succeeded user_exists_in_this_collection");
+  	collection_str = await user_exists_in_this_collection(user_email_str, database);
+
   	if(!collection_str)
       {
         json_response_obj = error_yes_token();
@@ -94,18 +85,18 @@ exports.setApp = function(app, client)
   		{
   			database_results_array =
   				await database.collection(collection_str).find( {email : user_email_str} ).toArray();
-      }
-    	catch(error)
-    	{
-    		json_response_obj = error_yes_token();
-    	}
-  		json_response_obj =
-  			json_response_obj_factory(
-  				true,
-  				database_results_array[0].display_name_str,
-  				database_results_array[0].description_str,
-  				create_refreshed_token(user_access_token_str));
 
+  			json_response_obj =
+  				json_response_obj_factory(
+  					true,
+  					database_results_array[0].display_name,
+  					database_results_array[0].description,
+  					create_refreshed_token(user_access_token_str));
+  		}
+  		catch(error)
+  		{
+  			json_response_obj = error_yes_token();
+  		}
 
   	}
   	res.status(200).json(json_response_obj);
