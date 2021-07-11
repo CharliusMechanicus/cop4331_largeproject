@@ -291,6 +291,13 @@ exports.setApp = function(app, client)
       else
       {
         verification_code_str = create_code(CODE_LENGTH_INT);
+        
+        while( does_this_code_exist(verification_code_str, database) )
+        {
+          verification_code_str = create_code(CODE_LENGTH_INT);
+        }
+        // AT THIS POINT, WE SHOULD HAVE A UNIQUE CODE
+        
         msg_body_str = ("Your verification code is: " + verification_code_str);
         
         await send_email(user_email_str, EMAIL_SUBJECT_STR, msg_body_str).then(
@@ -866,6 +873,7 @@ exports.setApp = function(app, client)
   |  send_email                                      |
   |  create_code                                     |
   |  create_code_character (helper for create_code)  |
+  |  does_this_code_exist                            |
   |  save_verification_code                          |
   ****************************************************/
 
@@ -1113,6 +1121,34 @@ exports.setApp = function(app, client)
     return code_character_array[random_array_index];
   }
 
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'true' IF 'verification_code_str' ALREADY EXISTS IN 'database', 'false' OTHERWISE
+  async function does_this_code_exist(verification_code_str, database)
+  {
+    const COLLECTION_NAME_FOR_STORED_CODES = "codes";
+  
+    let database_results_array =
+      await database.collection(COLLECTION_NAME_FOR_STORED_CODES).
+        find( {verification_code : verification_code_str} ).toArray();
+    
+    // IF THE CODE EXISTS ALREADY FOR VERIFICATION PURPOSES
+    if(database_results_array.length > 0)
+      return true;
+
+    // CONTINUE SEARCH
+    database_results_array =
+      await database.collection(COLLECTION_NAME_FOR_STORED_CODES).
+        find( {reset_code : verification_code_str} ).toArray();
+
+    // IF THE CODE EXISTS ALREADY FOR PASSWORD RESET PURPOSES
+    if(database_results_array.length > 0)
+      return true;
+
+    // AT THIS POINT, WE CAN ASSUME THAT THE CODE DOES NOT EXIST IN ANY CAPACITY
+    return false;
+  }
+  
   /************************************* NEXT FUNCTION *******************************************/
 
   // SAVES 'verification_code_str' INTO THE DATABASE
