@@ -292,7 +292,17 @@ exports.setApp = function(app, client)
       {
         verification_code_str = create_code(CODE_LENGTH_INT);
         msg_body_str = ("Your verification code is: " + verification_code_str);
-        send_success_bool = await send_email(user_email_str, EMAIL_SUBJECT_STR, msg_body_str);
+        
+        await send_email(user_email_str, EMAIL_SUBJECT_STR, msg_body_str).then(
+          function (resolved_value)
+          {
+            send_success_bool = resolved_value;
+          },
+          
+          function(rejected_value)
+          {
+            send_success_bool = rejected_value;
+          });
         
         // IF VERIFICATION EMAIL WAS SUCCESSFULLY SENT
         if(send_success_bool)
@@ -1033,13 +1043,13 @@ exports.setApp = function(app, client)
   /************************************* NEXT FUNCTION *******************************************/
 
   // SENDS EMAIL FROM KINDLING GMAIL ACCOUNT
-  // RETURNS 'true' IF EMAIL WAS SUCCESSFULY SENT, 'false' OTHERWISE
+  // RETURNS A PROMISE RESOLVING TO 'true', REJECTING TO 'false
   function send_email(sendto_address_str, subject_str, msg_body_str)
   {
     const nodemailer = require("nodemailer");
     const USER = "kindling.largeproject@gmail.com";
     const PASSWORD = "fireaway23";
-    
+
     let mail_transporter = nodemailer.createTransport(
       {
         service : "gmail",
@@ -1053,14 +1063,20 @@ exports.setApp = function(app, client)
         subject : subject_str,
         text : msg_body_str
       };
-    
-    mail_transporter.sendMail(mail_details, function(error, data)
+
+    let my_promise = new Promise(function (resolve, reject)
       {
-        if(error)
-          return false;
-        else
-          return true;
-      });
+        mail_transporter.sendMail(mail_details, function(error, data)
+          {
+            if(error)
+              reject(false);
+            else
+              resolve(true);
+          });        
+      }
+    );
+
+    return my_promise;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
@@ -1100,7 +1116,7 @@ exports.setApp = function(app, client)
   /************************************* NEXT FUNCTION *******************************************/
 
   // SAVES 'verification_code_str' INTO THE DATABASE
-  function save_verification_code(verification_code_str, user_email_str, database)
+  async function save_verification_code(verification_code_str, user_email_str, database)
   {
     const COLLECTION_NAME_FOR_STORED_CODES = "codes";
   
