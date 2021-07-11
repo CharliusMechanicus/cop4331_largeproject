@@ -9,7 +9,7 @@
 |                                     |
 |  register                           |
 |  login                              |
-|  send_email                         |
+|  send_verification_email            |
 |  verify_email                       |
 |  get_ready_status                   |
 |  initialize_profile_individual      |
@@ -224,10 +224,10 @@ exports.setApp = function(app, client)
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
-  // SEND_EMAIL API ENDPOINT
+  // SEND_VERIFICATION_EMAIL API ENDPOINT
   // INPUT: JSON OBJECT (email_str)
   // OUTPUT: JSON OBJECT (success_bool)
-  app.post('/api/send_email', async (req, res, next) =>
+  app.post('/api/send_verification_email', async (req, res, next) =>
   {
 
     /********************
@@ -323,7 +323,7 @@ exports.setApp = function(app, client)
 
     res.status(200).json(json_response_obj);
 
-  }); // END SEND_EMAIL API ENDPOINT
+  }); // END SEND_VERIFICATION_EMAIL API ENDPOINT
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
