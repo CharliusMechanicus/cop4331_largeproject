@@ -291,8 +291,8 @@ exports.setApp = function(app, client)
       else
       {
         verification_code_str = create_code(CODE_LENGTH_INT);
-        
-        while( does_this_code_exist(verification_code_str, database) )
+       
+        while( await does_this_code_exist(verification_code_str, database) )
         {
           verification_code_str = create_code(CODE_LENGTH_INT);
         }
