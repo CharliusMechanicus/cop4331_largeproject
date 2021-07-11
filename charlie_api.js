@@ -1077,7 +1077,9 @@ exports.setApp = function(app, client)
         mail_transporter.sendMail(mail_details, function(error, data)
           {
             if(error)
+            {
               reject(false);
+            }
             else
               resolve(true);
           });        
