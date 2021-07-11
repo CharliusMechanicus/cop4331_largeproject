@@ -370,7 +370,7 @@ exports.setApp = function(app, client)
 
     /*********************************************************************************************/
 
-    database_results_array =
+    database_results_array = await
       database.collection(COLLECTION_4_CODE_STORAGE).
       find( {verification_code : verification_code_str} ).toArray();
 
