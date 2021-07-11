@@ -9,6 +9,7 @@
 |                                     |
 |  register                           |
 |  login                              |
+|  send_email                         |
 |  verify_email                       |
 |  get_ready_status                   |
 |  initialize_profile_individual      |
@@ -223,6 +224,92 @@ exports.setApp = function(app, client)
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
+  // SEND_EMAIL API ENDPOINT
+  // INPUT: JSON OBJECT (email_str)
+  // OUTPUT: JSON OBJECT (success_bool)
+  app.post('/api/send_email', async (req, res, next) =>
+  {
+
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+
+    // TO RETURN
+    let send_success_bool;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    
+    const EMAIL_SUBJECT_STR = "Verification Code From Kindling";
+    const CODE_LENGTH_INT = 10;
+    let msg_body_str;
+    let verification_code_str;
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+
+    /*********************************************************************************************/
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      send_success_bool = false;
+    }    
+
+    // OTHERWISE, USER WAS FOUND IN DATABASE
+    else
+    {
+      database_results_array =
+        await database.collection(collection_str).find( {email : user_email_str, ready_status : 0} ).toArray();
+      
+      // IF THE USER DOES NOT HAVE A 'ready_status' CODE OF ZERO
+      if(database_results_array.length === 0)
+        send_success_bool = false;
+      
+      // OTHERWISE, THE USER CAN BE SENT VERIFICATION EMAILS
+      else
+      {
+        verification_code_str = create_code(CODE_LENGTH_INT);
+        msg_body_str = ("Your verification code is: " + verification_code_str);
+        send_success_bool = await send_email(user_email_str, EMAIL_SUBJECT_STR, msg_body_str);
+        
+        // IF VERIFICATION EMAIL WAS SUCCESSFULLY SENT
+        if(send_success_bool)
+          save_verification_code(verification_code_str, user_email_str, database);
+      }
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : send_success_bool};
+
+    res.status(200).json(json_response_obj);
+
+  }); // END SEND_EMAIL API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
   // VERIFY_EMAIL API ENDPOINT
   // INPUT: JSON OBJECT (email_str)
   // OUTPUT: JSON OBJECT (success_bool)
@@ -239,7 +326,6 @@ exports.setApp = function(app, client)
     let json_response_obj;
 
     let database;
-    let database_results_array;
     let collection_str;
     
     /*********************************************************************************************/
@@ -755,18 +841,23 @@ exports.setApp = function(app, client)
 
   /*********************************** END API ENDPOINTS *****************************************/
 
-  /***********************************
-  |   USER-DEFINED FUNCTIONS         |
-  ------------------------------------
-  |  (in order of appearance)        |
-  |                                  |
-  |  individual_obj_factory          |
-  |  group_obj_factory               |
-  |  user_exists_in_this_collection  |
-  |  is_this_collection_a_group      |
-  |  is_token_valid                  |
-  |  create_refreshed_token          |
-  ************************************/
+  /***************************************************
+  |   USER-DEFINED FUNCTIONS                         |
+  ----------------------------------------------------
+  |  (in order of appearance)                        |
+  |                                                  |
+  |  individual_obj_factory                          |
+  |  group_obj_factory                               |
+  |  code_obj_factory                                |
+  |  user_exists_in_this_collection                  |
+  |  is_this_collection_a_group                      |
+  |  is_token_valid                                  |
+  |  create_refreshed_token                          |
+  |  send_email                                      |
+  |  create_code                                     |
+  |  create_code_character (helper for create_code)  |
+  |  save_verification_code                          |
+  ****************************************************/
 
   function individual_obj_factory(email_str, pwd_str, display_name_str, phone_str,
     ind_categories_obj, description_str, candidate_group_categories_obj, ready_status_int,
@@ -808,6 +899,20 @@ exports.setApp = function(app, client)
     }
     
     return group_obj;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  function code_obj_factory(verification_code_str, reset_code_str, user_email_str)
+  {
+    let code_obj =
+    {
+      verification_code : verification_code_str,
+      reset_code : reset_code_str,
+      email : user_email_str
+    };
+    
+    return code_obj;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
@@ -923,6 +1028,98 @@ exports.setApp = function(app, client)
     }
     
     return refreshed_token_str;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // SENDS EMAIL FROM KINDLING GMAIL ACCOUNT
+  // RETURNS 'true' IF EMAIL WAS SUCCESSFULY SENT, 'false' OTHERWISE
+  function send_email(sendto_address_str, subject_str, msg_body_str)
+  {
+    const nodemailer = require("nodemailer");
+    const USER = "kindling.largeproject@gmail.com";
+    const PASSWORD = "fireaway23";
+    
+    let mail_transporter = nodemailer.createTransport(
+      {
+        service : "gmail",
+        auth : {user : USER, pass : PASSWORD}
+      } );
+      
+    let mail_details =
+      {
+        from : USER,
+        to : sendto_address_str,
+        subject : subject_str,
+        text : msg_body_str
+      };
+    
+    mail_transporter.sendMail(mail_details, function(error, data)
+      {
+        if(error)
+          return false;
+        else
+          return true;
+      });
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS A CODE STRING OF 'number_of_characters_int' LENGTH
+  function create_code(number_of_characters_int)
+  {
+    let new_code_str = "";
+    let current_index_int = 0;
+
+    while(current_index_int < number_of_characters_int)
+    {
+      new_code_str += create_code_character();
+      ++current_index_int;
+    }
+
+    return new_code_str;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RANDOMLY RETURNS A CHARACTER FROM 'code_character_array'
+  function create_code_character()
+  {
+    const code_character_array =
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
+     "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", 
+     "u", "v", "w", "x", "y", "z"];
+
+    let random_array_index = Math.floor(
+      Math.random() * code_character_array.length);
+
+    return code_character_array[random_array_index];
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // SAVES 'verification_code_str' INTO THE DATABASE
+  function save_verification_code(verification_code_str, user_email_str, database)
+  {
+    const COLLECTION_NAME_FOR_STORED_CODES = "codes";
+  
+    let database_results_array =
+      await database.collection(COLLECTION_NAME_FOR_STORED_CODES).find( {email : user_email_str} ).toArray();
+
+    // IF THERE IS CURRENTLY NO CODE ENTRY FOR THE USER
+    if(database_results_array.length === 0)
+    {
+      database.collection(COLLECTION_NAME_FOR_STORED_CODES).insertOne
+        ( code_obj_factory(verification_code_str, "", user_email_str) );
+    }
+    
+    // OTHERWISE, THE USER ALREADY EXISTS IN THE 'codes' COLLECTION
+    else
+    {
+      database.collection(COLLECTION_NAME_FOR_STORED_CODES).updateOne( {email : user_email_str},
+        { $set : {verification_code : verification_code_str} } );
+    }
   }
 
 }; // END setApp
