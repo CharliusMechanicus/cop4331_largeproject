@@ -10,6 +10,7 @@
 |  register                           |
 |  login                              |
 |  send_verification_email            |
+|  verify_email                       |
 |  bypass_email_verification          |
 |  get_ready_status                   |
 |  initialize_profile_individual      |
@@ -324,6 +325,102 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END SEND_VERIFICATION_EMAIL API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // VERIFY_EMAIL API ENDPOINT
+  // INPUT: JSON OBJECT (code_str)
+  // OUTPUT: JSON OBJECT (success_bool)
+  app.post('/api/verify_email', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let verification_code_str;
+    let user_email_str;
+
+    // TO RETURN
+    let verification_success_bool;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    const COLLECTION_4_CODE_STORAGE = "codes";
+    
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    verification_code_str = request_body_data.code_str;
+
+    /*********************************************************************************************/
+  
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    /*********************************************************************************************/
+
+    database_results_array =
+      database.collection(COLLECTION_4_CODE_STORAGE).
+      find( {verification_code : verification_code_str} ).toArray();
+
+    // IF THE CODE IS NOT CURRENTLY CONNECTED TO ANY USER
+    if(database_results_array.length === 0)
+      verification_success_bool = false;
+
+    // OTHERWISE, THE CODE IS CONNECTED TO A USER
+    else
+    {
+      // FIND USER CONNECTED TO THE CODE
+      user_email_str = database_results_array[0].email;
+      collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+      // IF USER COULD NOT BE FOUND IN DATABASE
+      if(!collection_str)
+      {
+        verification_success_bool = false;
+      }
+
+      // OTHERWISE, USER WAS FOUND IN DATABASE
+      else
+      {
+        try
+        {
+          // IF USER HAS A READY STATUS OF ZERO, CHANGE READY STATUS TO 1
+          database.collection(collection_str).updateOne( {email : user_email_str, ready_status : 0},
+            { $set : {ready_status : 1} } );
+
+          // NORMAL SCENARIO IS THAT READY STATUS CODE CHANGES FROM ZERO TO 1, HOWEVER, IN THE..
+          // ..EDGE CASE THAT THE USER HAS A READY STATUS CODE ALREADY GREATER THAN ZERO, THE..
+          // ..READY STATUS CODE WILL BE LEFT AT ITS CURRENT VALUE AND CONSIDERED VERIFIED (IN PAST)
+          verification_success_bool = true;
+        }
+        
+        catch(error)
+        {
+          console.log(error.message);
+          verification_success_bool = false;
+        }
+      }
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : verification_success_bool};
+
+    res.status(200).json(json_response_obj);
+
+  }); // END VERIFY_EMAIL API ENDPOINT
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
