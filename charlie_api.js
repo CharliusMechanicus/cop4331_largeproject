@@ -10,7 +10,7 @@
 |  register                           |
 |  login                              |
 |  send_verification_email            |
-|  verify_email                       |
+|  bypass_email_verification          |
 |  get_ready_status                   |
 |  initialize_profile_individual      |
 |  initialize_profile_group           |
@@ -327,10 +327,10 @@ exports.setApp = function(app, client)
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
-  // VERIFY_EMAIL API ENDPOINT
+  // BYPASS_EMAIL_VERIFICATION API ENDPOINT (FOR DEVELOPMENT PURPOSES ONLY)
   // INPUT: JSON OBJECT (email_str)
   // OUTPUT: JSON OBJECT (success_bool)
-  app.post('/api/verify_email', async (req, res, next) =>
+  app.post('/secret_api/bypass_email_verification', async (req, res, next) =>
   {
   
     /********************
@@ -401,7 +401,7 @@ exports.setApp = function(app, client)
 
     res.status(200).json(json_response_obj);
 
-  }); // END VERIFY_EMAIL API ENDPOINT
+  }); // END BYPASS_EMAIL_VERIFICATION API ENDPOINT
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
