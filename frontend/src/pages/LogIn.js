@@ -63,7 +63,7 @@ function LogIn()
                 storage.storeToken(res);
                 var user = {email:loginName.value, jwtToken:res.access_token_str};
                 localStorage.setItem('user_data', JSON.stringify(user));
-
+                
                 setMessage('');
                 window.location.href = '/card';
             }
