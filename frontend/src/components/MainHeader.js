@@ -4,7 +4,7 @@ function MainHeader()
 {
     return(
         <div>
-            <img src="/kindling-icon.jpg" alt="Kindling Icon" class="icon"/>
+            <img src="/kindling-icon.png" alt="Kindling Icon" class="icon"/>
             <h1 id="title">
                 Kindling
             </h1>
