@@ -29,7 +29,7 @@ function App() {
     <Router>
       <Switch>
         <Route path="/" exact>
-          // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE
+          {/* // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE */}
           <Index/>
         </Route>
 {/* 
