@@ -16,6 +16,7 @@
 |  initialize_profile_individual      |
 |  initialize_profile_group           |
 |  send_password_reset                |
+|  reset_password                     |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -1045,6 +1046,101 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END SEND_PASSWORD_RESET API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // RESET_PASSWORD API ENDPOINT
+  // INPUT: JSON OBJECT (code_str, new_password_str)
+  // OUTPUT: JSON OBJECT (success_bool)
+  app.post('/api/reset_password', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let pwd_reset_code_str;
+    let new_password_str;
+    let user_email_str;
+
+    // TO RETURN
+    let reset_success_bool;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    const COLLECTION_4_CODE_STORAGE = "codes";
+    
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    pwd_reset_code_str = request_body_data.code_str;
+    new_password_str = request_body_data.new_password_str;
+
+    /*********************************************************************************************/
+  
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    /*********************************************************************************************/
+
+    database_results_array = await
+      database.collection(COLLECTION_4_CODE_STORAGE).
+      find( {reset_code : pwd_reset_code_str} ).toArray();
+
+    // IF THE CODE IS NOT CURRENTLY CONNECTED TO ANY USER
+    if(database_results_array.length === 0)
+      reset_success_bool = false;
+
+    // OTHERWISE, THE CODE IS CONNECTED TO A USER
+    else
+    {
+      // FIND USER CONNECTED TO THE CODE
+      user_email_str = database_results_array[0].email;
+      collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+      // IF USER COULD NOT BE FOUND IN DATABASE
+      if(!collection_str)
+      {
+        reset_success_bool = false;
+      }
+
+      // OTHERWISE, USER WAS FOUND IN DATABASE
+      else
+      {
+        try
+        {
+          // UPDATE THE USER'S PASSWORD
+          database.collection(collection_str).updateOne( {email : user_email_str},
+            { $set : {password : new_password_str} } );
+
+          reset_success_bool = true;
+        }
+        
+        catch(error)
+        {
+          console.log(error.message);
+          reset_success_bool = false;
+        }
+      }
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : reset_success_bool};
+
+    res.status(200).json(json_response_obj);
+
+  }); // END RESET_PASSWORD API ENDPOINT
 
   /*********************************** END API ENDPOINTS *****************************************/
 
