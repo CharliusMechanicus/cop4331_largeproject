@@ -30,7 +30,29 @@ function App() {
       <Switch>
         <Route path="/" exact>
           // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE
+          <Index/>
         </Route>
+
+        <Route path="/SignUp" exact>
+          <SignUp/>
+        </Route>
+
+        <Route path="/Login" exact>
+          <Login/>
+        </Route>
+
+        <Route path="/ResetPassword" exact>
+          <ResetPassword/>
+        </Route>
+
+        <Route path="/Cards" exact>
+          <Cards/>
+        </Route>
+
+        <Route path="/MatchList" exact>
+          <MatchList/>
+        </Route>
+
         <Redirect to="/" />
       </Switch>  
     </Router>
