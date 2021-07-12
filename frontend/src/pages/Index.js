@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Header from '../components/Header';
+import MainHeader from '../components/MainHeader';
 
 function MainPage()
 {
   return (
       <div>
-          <Header/>
+          <MainHeader/>
       </div>
   );
 }
