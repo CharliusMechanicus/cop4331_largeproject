@@ -8,6 +8,16 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import './App.css';
 
+/***********
+|  PAGES   |
+************/
+import Index from './pages/index';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
+import Cards from './pages/Cards';
+import MatchList from './pages/MatchList';
+
 /***********************************************************************************************************/
 
 function App() {
