@@ -359,7 +359,17 @@ exports.setApp = function(app, client)
     verification_code_str = request_body_data.code_str;
 
     /*********************************************************************************************/
-  
+
+    // FIRST CHECK - MAKE SURE EMPTY STRING CANNOT BE ACCEPTED
+    if(verification_code_str === "")
+    {
+      json_response_obj = {success_bool : false};
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+
     // CONNECT TO DATABASE
     try
     {
@@ -1080,7 +1090,17 @@ exports.setApp = function(app, client)
     new_password_str = request_body_data.new_password_str;
 
     /*********************************************************************************************/
-  
+
+    // FIRST CHECK - MAKE SURE EMPTY STRING CANNOT BE ACCEPTED
+    if(pwd_reset_code_str === "")
+    {
+      json_response_obj = {success_bool : false};
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+
     // CONNECT TO DATABASE
     try
     {
@@ -1122,6 +1142,10 @@ exports.setApp = function(app, client)
           // UPDATE THE USER'S PASSWORD
           database.collection(collection_str).updateOne( {email : user_email_str},
             { $set : {password : new_password_str} } );
+
+          // CLEAR THE PASSWORD RESET CODE (SO IT CAN NOT BE USED MULTIPLE TIMES)
+          database.collection(COLLECTION_4_CODE_STORAGE).updateOne(
+            {email : user_email_str}, { $set : {reset_code : ""} } );
 
           reset_success_bool = true;
         }
