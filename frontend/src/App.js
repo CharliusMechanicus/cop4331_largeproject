@@ -11,12 +11,12 @@ import './App.css';
 /***********
 |  PAGES   |
 ************/
-import Index from './pages/index';
-import SignUp from './pages/SignUp';
-import Login from './pages/Login';
-import ResetPassword from './pages/ResetPassword';
-import Cards from './pages/Cards';
-import MatchList from './pages/MatchList';
+import Index from './pages/Index';
+// import SignUp from './pages/SignUp';
+// import Login from './pages/Login';
+// import ResetPassword from './pages/ResetPassword';
+// import Cards from './pages/Cards';
+// import MatchList from './pages/MatchList';
 
 /***********************************************************************************************************/
 
@@ -32,7 +32,7 @@ function App() {
           // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE
           <Index/>
         </Route>
-
+{/* 
         <Route path="/SignUp" exact>
           <SignUp/>
         </Route>
@@ -51,7 +51,7 @@ function App() {
 
         <Route path="/MatchList" exact>
           <MatchList/>
-        </Route>
+        </Route> */}
 
         <Redirect to="/" />
       </Switch>  
