@@ -130,7 +130,7 @@ exports.setApp = function(app, client)
 
   // LOGIN API ENDPOINT
   // INPUT: JSON OBJECT (email_str, password_str)
-  // OUTPUT: JSON OBJECT (success_bool, email_str, is_group_bool, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, email_str, is_group_bool, ready_status_int, access_token_str)
   app.post('/api/login', async (req, res, next) =>
   {
 
@@ -140,14 +140,16 @@ exports.setApp = function(app, client)
     let request_body_data;
     let user_email_str;
     let user_password_str;
-    let user_isgroup_bool;
     let collection_str;
     
     let database;
     let database_results_array;
     let access_token_str;
 
+    // TO RETURN
     let login_success_bool;
+    let user_isgroup_bool;
+    let ready_status_int;
     let json_response_obj;
     
     let my_token_functions = require("./createJWT.js");
@@ -180,6 +182,7 @@ exports.setApp = function(app, client)
     {
       login_success_bool = false;
       user_isgroup_bool = "";
+      ready_status_int = -1234;
       access_token_str = "";
     }
     
@@ -198,6 +201,7 @@ exports.setApp = function(app, client)
         {
           login_success_bool = true;
           user_isgroup_bool = is_this_collection_a_group(collection_str);
+          ready_status_int = database_results_array[0].ready_status;
           access_token_str = my_token_functions.createToken(user_email_str);
         }
         
@@ -206,6 +210,7 @@ exports.setApp = function(app, client)
         {
           login_success_bool = false;
           user_isgroup_bool = "";
+          ready_status_int = extract_ready_status_from_user(user_email_str, database);
           access_token_str = "";
         }
       }
@@ -213,13 +218,18 @@ exports.setApp = function(app, client)
       catch(error)
       {
         console.log(error.message);
+        
+        login_success_bool = false;
+        user_isgroup_bool = "";
+        ready_status_int = -1234;
+        access_token_str = "";
       }
     }
     
     /*********************************************************************************************/
     
     json_response_obj = {success_bool : login_success_bool, email_str : user_email_str,
-      is_group_bool : user_isgroup_bool, access_token_str : access_token_str};
+      is_group_bool : user_isgroup_bool, ready_status_int : ready_status_int, access_token_str : access_token_str};
     
     res.status(200).json(json_response_obj);
     
@@ -1178,6 +1188,7 @@ exports.setApp = function(app, client)
   |  code_obj_factory                                |
   |  user_exists_in_this_collection                  |
   |  is_this_collection_a_group                      |
+  |  extract_ready_status_from_user                  |
   |  is_token_valid                                  |
   |  create_refreshed_token                          |
   |  send_email                                      |
@@ -1307,6 +1318,26 @@ exports.setApp = function(app, client)
 
     else
       return false;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'ready_status' FROM USER CORRESPONDING TO 'user_email_str'
+  // RETURNS PHONY 'ready_status' IF USER COULD NOT BE FOUND IN DATABASE
+  async function extract_ready_status_from_user(user_email_str, database)
+  {
+    let collection_str =
+      await user_exists_in_this_collection(user_email_str, database);
+
+    // IF USER COULD NOT BE FOUND IN DATABASE  
+    if(!collection_str)
+      return -1234;
+      
+    // AT THIS POINT, WE CAN ASSUME THAT THE USER EXISTS IN THE DATABASE
+    let database_results_array =
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+      
+    return database_results_array[0].ready_status;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
