@@ -1,26 +1,18 @@
-// THIS IS THE ENTRY POINT TO OUR APP
-// THE ONLY THING THAT SHOULD OCCUR HERE IS DIRECTING PEOPLE TO THE CORRECT PAGE OR RESOURCE
-
-/***********
-|  IMPORTS |
-************/
 import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 
-import MainPage from './Pages/MainPage'
-import SignUp from './Pages/SignUp'
-import LogIn from './Pages/LogIn'
-import ResetPassword from './Pages/ResetPassword';
-import Cards from './Pages/Card';
-import MatchList from './Pages/Match';
-import Update from './Pages/Update';
+import MainPage from './pages/MainPage'
+import SignUp from './pages/SignUp'
+import LogIn from './pages/LogIn'
+import ResetPassword from './pages/ResetPassword';
+import Cards from './pages/Card';
+import MatchList from './pages/Match';
+import Update from './pages/Update';
+import EmailVerification from './pages/EmailVerification';
 
-/***********************************************************************************************************/
-  
 function App() {
-  /* NOTICE THE <Switch> TAGS. THEY ACT LIKE SWITCH STATEMENTS IN C, BUT YOU DON'T HAVE TO 'break'
-      AFTER A MATCHING 'case'. <Route> TAGS ARE LIKE THE CASES. <Redirect> ACTS LIKE THE 'default' CASE */
+
   return (
   <Router >
     <Switch>
@@ -35,6 +27,10 @@ function App() {
 
       <Route path="/login" exact>
         <LogIn />
+      </Route>
+
+      <Route path="/emailverification" exact>
+        <EmailVerification />
       </Route>
 
       <Route path="/resetpassword" exact>
@@ -58,7 +54,5 @@ function App() {
   </Router>
   );
 }
-
-/***********************************************************************************************************/
 
 export default App;

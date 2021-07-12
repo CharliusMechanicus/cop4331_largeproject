@@ -5,7 +5,7 @@ function SignUp()
 {
     const [switchshow, setSwitchshow] = useState('Project');
     
-
+        
     const toIndividual = async event =>
     {
         setSwitchshow("Individual");
