@@ -19,7 +19,7 @@ function App() {
     <Router>
       <Switch>
         <Route path="/" exact>
-          // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE
+          // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE AND TEST IT
         </Route>
         <Redirect to="/" />
       </Switch>  
