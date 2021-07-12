@@ -210,7 +210,7 @@ exports.setApp = function(app, client)
         {
           login_success_bool = false;
           user_isgroup_bool = "";
-          ready_status_int = extract_ready_status_from_user(user_email_str, database);
+          ready_status_int = await extract_ready_status_from_user(user_email_str, database);
           access_token_str = "";
         }
       }
