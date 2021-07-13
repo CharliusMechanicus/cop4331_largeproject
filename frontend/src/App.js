@@ -11,7 +11,7 @@ import './App.css';
 /***********
 |  PAGES   |
 ************/
-import Index from './pages/Index';
+import MainPage from './pages/MainPage';
 // import SignUp from './pages/SignUp';
 // import Login from './pages/Login';
 // import ResetPassword from './pages/ResetPassword';
@@ -30,7 +30,7 @@ function App() {
       <Switch>
         <Route path="/" exact>
           {/* // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE */}
-          <Index/>
+          <MainPage/>
         </Route>
 {/* 
         <Route path="/SignUp" exact>
