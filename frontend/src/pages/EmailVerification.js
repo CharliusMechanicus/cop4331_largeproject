@@ -53,7 +53,7 @@ function EmailVerification()
             }
             else
             {
-                window.location.href = '/emailverification';
+                window.location.href = '/tags';
             }
         }
         catch(e)
@@ -76,7 +76,7 @@ function EmailVerification()
             <div class='codeVerification'>
                 <h1>Code Verification</h1>
                 <input type='text' class='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-                <button class='btn' id='code_verify_btn' onClick={verifyCode}>Send Email</button>
+                <button class='btn' id='code_verify_btn' onClick={verifyCode}>Verify Code</button>
                 <h2>{message}</h2>
             </div>
         }

@@ -14,7 +14,6 @@ function SignUp()
 
     const doSignup = async event =>
     {
-        //console.log(password.value + " || " + confirm_password.value);
         if (password.value !== confirm_password.value)
         {
             setMessage('* Passwords do not match!');
