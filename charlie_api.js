@@ -210,7 +210,12 @@ exports.setApp = function(app, client)
         {
           login_success_bool = false;
           user_isgroup_bool = "";
-          ready_status_int = await extract_ready_status_from_user(user_email_str, database);
+          
+          if( await this_user_has_this_password(user_email_str, user_password_str, database, collection_str) )
+            ready_status_int = await extract_ready_status_from_user(user_email_str, database);
+          else
+            ready_status_int = -1234;
+            
           access_token_str = "";
         }
       }
@@ -1189,6 +1194,7 @@ exports.setApp = function(app, client)
   |  user_exists_in_this_collection                  |
   |  is_this_collection_a_group                      |
   |  extract_ready_status_from_user                  |
+  |  this_user_has_this_password                     |
   |  is_token_valid                                  |
   |  create_refreshed_token                          |
   |  send_email                                      |
@@ -1338,6 +1344,25 @@ exports.setApp = function(app, client)
       await database.collection(collection_str).find( {email : user_email_str} ).toArray();
       
     return database_results_array[0].ready_status;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'true' IF 'user_email_str' HAS A PASSWORD VALUE OF 'user_password_str', 'false'...
+  // ...OTHERWISE
+  // A VALID EMAIL IN THE DATABASE SHOULD EXIST AND BE PASSED AS 'user_email_str'
+  // 'user_email_str' SHOULD EXIST AS A USER IN 'collection_str' COLLECTION OF THE DATABASE
+  async function this_user_has_this_password(user_email_str, user_password_str,
+    database, collection_str)
+  {
+    let database_results_array =
+      await database.collection(collection_str).find(
+      {email : user_email_str, password : user_password_str} ).toArray();
+      
+    if(database_results_array.length === 0)
+      return false;
+      
+    return true;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
