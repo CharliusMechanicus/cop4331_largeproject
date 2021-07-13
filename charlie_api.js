@@ -16,6 +16,7 @@
 |  initialize_profile_individual      |
 |  initialize_profile_group           |
 |  send_password_reset                |
+|  reset_password                     |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -129,7 +130,7 @@ exports.setApp = function(app, client)
 
   // LOGIN API ENDPOINT
   // INPUT: JSON OBJECT (email_str, password_str)
-  // OUTPUT: JSON OBJECT (success_bool, email_str, is_group_bool, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, email_str, is_group_bool, ready_status_int, access_token_str)
   app.post('/api/login', async (req, res, next) =>
   {
 
@@ -139,14 +140,16 @@ exports.setApp = function(app, client)
     let request_body_data;
     let user_email_str;
     let user_password_str;
-    let user_isgroup_bool;
     let collection_str;
     
     let database;
     let database_results_array;
     let access_token_str;
 
+    // TO RETURN
     let login_success_bool;
+    let user_isgroup_bool;
+    let ready_status_int;
     let json_response_obj;
     
     let my_token_functions = require("./createJWT.js");
@@ -179,6 +182,7 @@ exports.setApp = function(app, client)
     {
       login_success_bool = false;
       user_isgroup_bool = "";
+      ready_status_int = -1234;
       access_token_str = "";
     }
     
@@ -197,6 +201,7 @@ exports.setApp = function(app, client)
         {
           login_success_bool = true;
           user_isgroup_bool = is_this_collection_a_group(collection_str);
+          ready_status_int = database_results_array[0].ready_status;
           access_token_str = my_token_functions.createToken(user_email_str);
         }
         
@@ -205,6 +210,12 @@ exports.setApp = function(app, client)
         {
           login_success_bool = false;
           user_isgroup_bool = "";
+          
+          if( await this_user_has_this_password(user_email_str, user_password_str, database, collection_str) )
+            ready_status_int = await extract_ready_status_from_user(user_email_str, database);
+          else
+            ready_status_int = -1234;
+            
           access_token_str = "";
         }
       }
@@ -212,13 +223,18 @@ exports.setApp = function(app, client)
       catch(error)
       {
         console.log(error.message);
+        
+        login_success_bool = false;
+        user_isgroup_bool = "";
+        ready_status_int = -1234;
+        access_token_str = "";
       }
     }
     
     /*********************************************************************************************/
     
     json_response_obj = {success_bool : login_success_bool, email_str : user_email_str,
-      is_group_bool : user_isgroup_bool, access_token_str : access_token_str};
+      is_group_bool : user_isgroup_bool, ready_status_int : ready_status_int, access_token_str : access_token_str};
     
     res.status(200).json(json_response_obj);
     
@@ -358,7 +374,17 @@ exports.setApp = function(app, client)
     verification_code_str = request_body_data.code_str;
 
     /*********************************************************************************************/
-  
+
+    // FIRST CHECK - MAKE SURE EMPTY STRING CANNOT BE ACCEPTED
+    if(verification_code_str === "")
+    {
+      json_response_obj = {success_bool : false};
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+
     // CONNECT TO DATABASE
     try
     {
@@ -1046,6 +1072,115 @@ exports.setApp = function(app, client)
 
   }); // END SEND_PASSWORD_RESET API ENDPOINT
 
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // RESET_PASSWORD API ENDPOINT
+  // INPUT: JSON OBJECT (code_str, new_password_str)
+  // OUTPUT: JSON OBJECT (success_bool)
+  app.post('/api/reset_password', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let pwd_reset_code_str;
+    let new_password_str;
+    let user_email_str;
+
+    // TO RETURN
+    let reset_success_bool;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    const COLLECTION_4_CODE_STORAGE = "codes";
+    
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    pwd_reset_code_str = request_body_data.code_str;
+    new_password_str = request_body_data.new_password_str;
+
+    /*********************************************************************************************/
+
+    // FIRST CHECK - MAKE SURE EMPTY STRING CANNOT BE ACCEPTED
+    if(pwd_reset_code_str === "")
+    {
+      json_response_obj = {success_bool : false};
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    /*********************************************************************************************/
+
+    database_results_array = await
+      database.collection(COLLECTION_4_CODE_STORAGE).
+      find( {reset_code : pwd_reset_code_str} ).toArray();
+
+    // IF THE CODE IS NOT CURRENTLY CONNECTED TO ANY USER
+    if(database_results_array.length === 0)
+      reset_success_bool = false;
+
+    // OTHERWISE, THE CODE IS CONNECTED TO A USER
+    else
+    {
+      // FIND USER CONNECTED TO THE CODE
+      user_email_str = database_results_array[0].email;
+      collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+      // IF USER COULD NOT BE FOUND IN DATABASE
+      if(!collection_str)
+      {
+        reset_success_bool = false;
+      }
+
+      // OTHERWISE, USER WAS FOUND IN DATABASE
+      else
+      {
+        try
+        {
+          // UPDATE THE USER'S PASSWORD
+          database.collection(collection_str).updateOne( {email : user_email_str},
+            { $set : {password : new_password_str} } );
+
+          // CLEAR THE PASSWORD RESET CODE (SO IT CAN NOT BE USED MULTIPLE TIMES)
+          database.collection(COLLECTION_4_CODE_STORAGE).updateOne(
+            {email : user_email_str}, { $set : {reset_code : ""} } );
+
+          reset_success_bool = true;
+        }
+        
+        catch(error)
+        {
+          console.log(error.message);
+          reset_success_bool = false;
+        }
+      }
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : reset_success_bool};
+
+    res.status(200).json(json_response_obj);
+
+  }); // END RESET_PASSWORD API ENDPOINT
+
   /*********************************** END API ENDPOINTS *****************************************/
 
   /***************************************************
@@ -1058,6 +1193,8 @@ exports.setApp = function(app, client)
   |  code_obj_factory                                |
   |  user_exists_in_this_collection                  |
   |  is_this_collection_a_group                      |
+  |  extract_ready_status_from_user                  |
+  |  this_user_has_this_password                     |
   |  is_token_valid                                  |
   |  create_refreshed_token                          |
   |  send_email                                      |
@@ -1187,6 +1324,45 @@ exports.setApp = function(app, client)
 
     else
       return false;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'ready_status' FROM USER CORRESPONDING TO 'user_email_str'
+  // RETURNS PHONY 'ready_status' IF USER COULD NOT BE FOUND IN DATABASE
+  async function extract_ready_status_from_user(user_email_str, database)
+  {
+    let collection_str =
+      await user_exists_in_this_collection(user_email_str, database);
+
+    // IF USER COULD NOT BE FOUND IN DATABASE  
+    if(!collection_str)
+      return -1234;
+      
+    // AT THIS POINT, WE CAN ASSUME THAT THE USER EXISTS IN THE DATABASE
+    let database_results_array =
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+      
+    return database_results_array[0].ready_status;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS 'true' IF 'user_email_str' HAS A PASSWORD VALUE OF 'user_password_str', 'false'...
+  // ...OTHERWISE
+  // A VALID EMAIL IN THE DATABASE SHOULD EXIST AND BE PASSED AS 'user_email_str'
+  // 'user_email_str' SHOULD EXIST AS A USER IN 'collection_str' COLLECTION OF THE DATABASE
+  async function this_user_has_this_password(user_email_str, user_password_str,
+    database, collection_str)
+  {
+    let database_results_array =
+      await database.collection(collection_str).find(
+      {email : user_email_str, password : user_password_str} ).toArray();
+      
+    if(database_results_array.length === 0)
+      return false;
+      
+    return true;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
