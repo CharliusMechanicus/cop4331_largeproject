@@ -37,6 +37,109 @@
   }
 }
 
+.icon {
+  margin: 20px;
+}
+
 .title {
   color: #ffffff;
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+  
+}
+
+.main-page {
+  background-color: #000000;
+  background-repeat: no-repeat;
+  min-height: 100%;
+  max-height: 100%;
+}
+
+.main-header {
+  min-height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 10px solid blue;
+  display: inline-block;
+}
+
+.main-left {
+  float: left;
+}
+
+.main-right {
+  float: right;
+  justify-content: center;
+  margin-top: 45px;
+}
+
+.fire
+{
+    position: absolute;
+    left: 50px;
+    top: 50px;
+}
+
+.top_title
+{
+    position: absolute;
+    top: 70px;
+    left: 150px;
+    color: white;
+    size: 40px;
+}
+
+.fire_hand
+{
+    position: absolute;
+    top: 30%;
+    left: 45%;
+    display: block;
+    width: 200px;
+    height: 200px;
+}
+
+.center_text
+{
+    top: 52%;
+    left: 40%;
+    position: absolute;
+    color: white;
+    font-size: 300%; 
+}
+
+.btn 
+{
+    position: absolute;
+    display: inline-block;
+    padding: 20px 100px;
+    font-size: 24px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 15px;
+    overflow: visible;
+}
+  
+.btn:active 
+{ 
+    transform: translateY(4px);
+}
+
+#login_btn
+{
+    background-color: #8C1C13;
+    border-color: #F0473A;
+    left: 30%;
+    bottom: 20%;
+}
+
+#signup_btn
+{
+    background-color: #F0473A;
+    border-color: #FFA347;
+    right: 30%;
+    bottom: 20%;
 }
