@@ -21,12 +21,6 @@ import ResetPassword from './pages/ResetPassword';
 // import Settings from './pages/Settings';
 import EmailVerification from './pages/EmailVerification';
 
-// import SignUp from './pages/SignUp';
-// import Login from './pages/Login';
-// import ResetPassword from './pages/ResetPassword';
-// import Cards from './pages/Cards';
-// import MatchList from './pages/MatchList';
-
 /***********************************************************************************************************/
 
 function App() {
