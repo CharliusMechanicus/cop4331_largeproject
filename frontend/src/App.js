@@ -12,6 +12,15 @@ import './App.css';
 |  PAGES   |
 ************/
 import MainPage from './pages/MainPage';
+import Login from './pages/Login';
+import Tags from './pages/Tags';
+import SignUp from './pages/SignUp';
+import ResetPassword from './pages/ResetPassword';
+// import Home from './pages/Home';
+// import MatchList from './pages/MatchList';
+// import Settings from './pages/Settings';
+import EmailVerification from './pages/EmailVerification';
+
 // import SignUp from './pages/SignUp';
 // import Login from './pages/Login';
 // import ResetPassword from './pages/ResetPassword';
@@ -32,26 +41,38 @@ function App() {
           {/* // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE */}
           <MainPage/>
         </Route>
-{/* 
-        <Route path="/SignUp" exact>
-          <SignUp/>
-        </Route>
 
         <Route path="/Login" exact>
           <Login/>
         </Route>
 
+        <Route path="/Tags" exact>
+          <Tags/>
+        </Route>
+
+        <Route path="/SignUp" exact>
+          <SignUp/>
+        </Route>
+
         <Route path="/ResetPassword" exact>
           <ResetPassword/>
         </Route>
-
-        <Route path="/Cards" exact>
-          <Cards/>
+{/* 
+        <Route path="/Home" exact>
+          <Home/>
         </Route>
 
         <Route path="/MatchList" exact>
           <MatchList/>
+        </Route>
+
+        <Route path="/Settings" exact>
+          <Settings/>
         </Route> */}
+
+        <Route path="/EmailVerification" exact>
+          <EmailVerification/>
+        </Route>
 
         <Redirect to="/" />
       </Switch>  
