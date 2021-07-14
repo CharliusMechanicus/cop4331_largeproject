@@ -65,7 +65,7 @@ function SignUp()
                 onChange={toIndividual}
                 className='switch_btn'
             /><br/>
-            <span>{message}</span>
+            <span>{message}</span><br/>
             <button class='bnt' id='signup_bnt' onClick={doSignup}>Sign Up</button><br/>
         </div>
     );

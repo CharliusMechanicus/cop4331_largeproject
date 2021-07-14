@@ -73,7 +73,7 @@ function EmailVerification()
                 <h2>{message}</h2>
             </div>
             :
-            <div class='codeVerification'>
+            <div class='code_verification'>
                 <h1>Code Verification</h1>
                 <input type='text' class='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
                 <button class='btn' id='code_verify_btn' onClick={verifyCode}>Verify Code</button>

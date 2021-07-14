@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {BrowserRouter as Router, Switch, Route, Link, Redirect} from "react-router-dom";
-import './LogIn&SignUp.css';
 
 function LogIn()
 {
@@ -17,7 +16,7 @@ function LogIn()
         var obj = {email_str:loginName.value,password_str:loginPassword.value};
         var js = JSON.stringify(obj);
         var storage = require('../tokenStorage.js');
-        
+
         try
         {    
             const response = await fetch(api_path + 'api/login',
@@ -25,27 +24,18 @@ function LogIn()
 
             var res = JSON.parse(await response.text());
             
-           
-            
-            
-            
             // ready state is 0, send user to email verification page.
-            if( res['ready_state_int'] === 0)
+            if( res.ready_status_int == 0)
             {
                 window.location.href = '/emailverification';
             }
             // ready state is 1, send user to complete his personal file.
-            else if( res['ready_state_int'] === 1)
+            else if( res.ready_status_int == 1)
             {
                 window.location.href = '/signup/tags';
             }
-            // Fail to login
-            else if( res['ready_state_int'] < 0)
-            {
-                setMessage('User/Password combination incorrect');
-            }
             // successfully logged in
-            else
+            else if ( res.ready_status_int == 2)
             {
                 storage.storeToken(res);
                 var user = {email:loginName.value, jwtToken:res.access_token_str};
@@ -53,6 +43,11 @@ function LogIn()
                 
                 setMessage('');
                 window.location.href = '/card';
+            }
+            // Fail to login
+            else
+            {
+                setMessage('User/Password combination incorrect');
             }
         }
         catch(e)
