@@ -39,7 +39,7 @@ function SignUp()
                 }
                 else
                 {
-                    window.location.href = '/emailverification';
+                    window.location.href = '/email_verification';
                 }
             }
             catch(e)

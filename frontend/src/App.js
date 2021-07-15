@@ -10,7 +10,7 @@ import Cards from './pages/Card';
 import MatchList from './pages/Match';
 import Update from './pages/Update';
 import EmailVerification from './pages/EmailVerification';
-import Tages from './pages/Tags';
+import InitialProfile from './pages/InitialProfile';
 
 function App() {
 
@@ -26,19 +26,19 @@ function App() {
         <SignUp />
       </Route>
 
-      <Route path="/signup/tags" exact>
-        <Tages />
+      <Route path="/signup/initial_profile" exact>
+        <InitialProfile />
       </Route>
 
       <Route path="/login" exact>
         <LogIn />
       </Route>
 
-      <Route path="/emailverification" exact>
+      <Route path="/email_verification" exact>
         <EmailVerification />
       </Route>
 
-      <Route path="/resetpassword" exact>
+      <Route path="/reset_password" exact>
         <ResetPassword />
       </Route>
 

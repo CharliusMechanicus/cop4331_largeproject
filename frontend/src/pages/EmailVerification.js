@@ -53,7 +53,7 @@ function EmailVerification()
             }
             else
             {
-                window.location.href = '/tags';
+                window.location.href = '/login';
             }
         }
         catch(e)

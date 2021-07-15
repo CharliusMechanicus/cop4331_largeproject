@@ -27,18 +27,22 @@ function LogIn()
             // ready state is 0, send user to email verification page.
             if( res.ready_status_int == 0)
             {
-                window.location.href = '/emailverification';
+                window.location.href = '/email_verification';
             }
             // ready state is 1, send user to complete his personal file.
             else if( res.ready_status_int == 1)
             {
-                window.location.href = '/signup/tags';
+                storage.storeToken(res);
+                var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
+                localStorage.setItem('user_data', JSON.stringify(user));
+                
+                window.location.href = '/signup/initial_profile';
             }
             // successfully logged in
             else if ( res.ready_status_int == 2)
             {
                 storage.storeToken(res);
-                var user = {email:loginName.value, jwtToken:res.access_token_str};
+                var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 
                 setMessage('');
@@ -64,7 +68,7 @@ function LogIn()
                 <input type="email" name="username" placeholder='email\username' ref={(c) => loginName = c}></input><br/>
                 <input type="password" name="password" placeholder='password' ref={(c) => loginPassword = c}></input><br/>
                 <button class='btn' id='login_page_bnt' onClick={doLogin}>Log In</button><br/>
-                <Link to={'/resetPassword'} >forget passwrod?</Link><br/>
+                <Link to={'/reset_password'} >forget passwrod?</Link><br/>
                 <h2 id="loginResult">{message}</h2>
             </div>
         </div>
