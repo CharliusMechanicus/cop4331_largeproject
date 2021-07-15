@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import storage from '../tokenStorage.js';
 
 export default function InitialProfile()
 {
@@ -79,8 +79,6 @@ export default function InitialProfile()
                         {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
                 
                 var res = JSON.parse(await response.text());
-                
-                console.log(res.refreshed_token_str);
 
                 // Fail to setup profile
                 if (!res.success_bool)
@@ -91,6 +89,10 @@ export default function InitialProfile()
                 else
                 {
                     setMessage('');
+                    storage.storeToken(res);
+                    var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
+                    localStorage.setItem('user_data', JSON.stringify(user));
+                    
                     window.location.href = '/card';
                 }
             }
