@@ -21,13 +21,14 @@ exports.setApp = function(app, client)
 
   	// Response Object Function
   	const json_response_obj_factory =
-        function (success_bool, display_name_str, description_str, refreshed_token_str)
+        function (success_bool, display_name_str, description_str, phone_str, refreshed_token_str)
         {
           let json_response_obj =
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-  			description_str : description_str,
+			  description_str : description_str,
+			  phone_str : phone_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -37,13 +38,13 @@ exports.setApp = function(app, client)
   	const error_no_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", "");
+  			return json_response_obj_factory(false, "", "", "", "");
   		}
 
   	const error_yes_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", create_refreshed_token(user_access_token_str));
+  			return json_response_obj_factory(false, "", "", "", create_refreshed_token(user_access_token_str));
   		}
 
   	// Parse Data
@@ -91,6 +92,7 @@ exports.setApp = function(app, client)
   					true,
   					database_results_array[0].display_name,
   					database_results_array[0].description,
+					database_results_array[0].phone,
   					create_refreshed_token(user_access_token_str));
   		}
   		catch(error)
@@ -122,13 +124,14 @@ exports.setApp = function(app, client)
 
   	// Response Object Function
   	const json_response_obj_factory =
-        function (success_bool, display_name_str, description_str, refreshed_token_str)
+        function (success_bool, display_name_str, description_str, phone_str, refreshed_token_str)
         {
           let json_response_obj =
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-  			description_str : description_str,
+			  description_str : description_str,
+			  phone_str : phone_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -138,13 +141,13 @@ exports.setApp = function(app, client)
   	const error_no_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", "");
+  			return json_response_obj_factory(false, "", "", "", "");
   		}
 
   	const error_yes_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", create_refreshed_token(user_access_token_str));
+  			return json_response_obj_factory(false, "", "", "", create_refreshed_token(user_access_token_str));
   		}
 
   	// Parse Data
@@ -192,6 +195,7 @@ exports.setApp = function(app, client)
   					true,
   					database_results_array[0].display_name,
   					database_results_array[0].description,
+					database_results_array[0].phone,
   					create_refreshed_token(user_access_token_str));
   		}
   		catch(error)
