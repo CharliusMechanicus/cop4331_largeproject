@@ -1092,7 +1092,7 @@ exports.setApp = function(app, client)
     // IF USER IS A GROUP
     if( is_this_collection_a_group(collection_str) )
     {
-      abridged_matches_array = find_individuals_that_match(user_email_str, database);
+      abridged_matches_array = await find_individuals_that_match(user_email_str, database);
       
       // IF FRONTEND DID NOT SPECIFY 'e'XTENDED OUTPUT
       if(output_select_str.toLowerCase() !== "e")
@@ -1108,14 +1108,14 @@ exports.setApp = function(app, client)
       
       for(let i = 0; i < abridged_matches_array.length; ++i)
       {
-        matches_array.push( create_extended_matches_obj(abridged_matches_array[i], database) );
+        matches_array.push( await create_extended_matches_obj(abridged_matches_array[i], database) );
       }
     }
     
     // OTHERWISE, USER IS AN INDIVIDUAL
     else
     {
-      abridged_matches_array = find_groups_that_match(user_email_str, database);
+      abridged_matches_array = await find_groups_that_match(user_email_str, database);
       
       // IF FRONTEND DID NOT SPECIFY 'e'XTENDED OUTPUT
       if(output_select_str.toLowerCase() !== "e")
@@ -1131,7 +1131,7 @@ exports.setApp = function(app, client)
       
       for(let i = 0; i < abridged_matches_array.length; ++i)
       {
-        matches_array.push( create_extended_matches_obj(abridged_matches_array[i], database) );
+        matches_array.push( await create_extended_matches_obj(abridged_matches_array[i], database) );
       }
     }
 
@@ -1598,7 +1598,7 @@ exports.setApp = function(app, client)
     /*************************************************************************************/
 
     database_results_array =
-      await database.collection("groups").findOne( {email : user_email_str} ).toArray();
+      await database.collection("groups").find( {email : user_email_str} ).toArray();
 
     user_candidates_array = database_results_array[0].candidates;
 
@@ -1652,7 +1652,7 @@ exports.setApp = function(app, client)
     /*************************************************************************************/
 
     database_results_array =
-      await database.collection("individuals").findOne( {email : user_email_str} ).toArray();
+      await database.collection("individuals").find( {email : user_email_str} ).toArray();
 
     user_candidates_array = database_results_array[0].candidates;
 
@@ -1700,7 +1700,7 @@ exports.setApp = function(app, client)
       await user_exists_in_this_collection(user_email_str, database);
       
     let database_results_array =
-      await database.collection(collection_str).findOne( {email : user_email_str} ).toArray();
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
     
     // EXTENDED INFORMATION
     let display_name_str;
