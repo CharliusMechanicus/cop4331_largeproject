@@ -21,13 +21,14 @@ exports.setApp = function(app, client)
 
   	// Response Object Function
   	const json_response_obj_factory =
-        function (success_bool, display_name_str, description_str, refreshed_token_str)
+        function (success_bool, display_name_str, description_str, phone_str, refreshed_token_str)
         {
           let json_response_obj =
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-  			description_str : description_str,
+			  description_str : description_str,
+			  phone_str : phone_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -37,13 +38,13 @@ exports.setApp = function(app, client)
   	const error_no_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", "");
+  			return json_response_obj_factory(false, "", "", "", "");
   		}
 
   	const error_yes_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", create_refreshed_token(user_access_token_str));
+  			return json_response_obj_factory(false, "", "", "", create_refreshed_token(user_access_token_str));
   		}
 
   	// Parse Data
@@ -91,6 +92,7 @@ exports.setApp = function(app, client)
   					true,
   					database_results_array[0].display_name,
   					database_results_array[0].description,
+					database_results_array[0].phone,
   					create_refreshed_token(user_access_token_str));
   		}
   		catch(error)
@@ -122,13 +124,14 @@ exports.setApp = function(app, client)
 
   	// Response Object Function
   	const json_response_obj_factory =
-        function (success_bool, display_name_str, description_str, refreshed_token_str)
+        function (success_bool, display_name_str, description_str, phone_str, refreshed_token_str)
         {
           let json_response_obj =
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-  			description_str : description_str,
+			  description_str : description_str,
+			  phone_str : phone_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -138,13 +141,13 @@ exports.setApp = function(app, client)
   	const error_no_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", "");
+  			return json_response_obj_factory(false, "", "", "", "");
   		}
 
   	const error_yes_token =
   		function ()
   		{
-  			return json_response_obj_factory(false, "", "", create_refreshed_token(user_access_token_str));
+  			return json_response_obj_factory(false, "", "", "", create_refreshed_token(user_access_token_str));
   		}
 
   	// Parse Data
@@ -192,6 +195,7 @@ exports.setApp = function(app, client)
   					true,
   					database_results_array[0].display_name,
   					database_results_array[0].description,
+					database_results_array[0].phone,
   					create_refreshed_token(user_access_token_str));
   		}
   		catch(error)
@@ -506,6 +510,44 @@ exports.setApp = function(app, client)
 
   	}
   	res.status(200).json(json_response_obj);
+    });
+
+    // -- GET_CANDIATE --
+    // ! THIS IS A TEMPORARY FUNCTION !
+      app.post('/api/get_candidate', async (req, res, next) =>
+      {
+      let request_body_data;
+      let user_email_str;
+      let user_access_token_str;
+
+      let get_status_sucess_bool;
+      let user_description_str;
+      let refreshed_token_str;
+      let json_response_obj;
+
+      let database;
+        let database_results_array;
+      let collection_str;
+
+      // Response Object Function
+      const json_response_obj_factory =
+          function (success_bool, email_str, refreshed_token_str)
+          {
+            let json_response_obj =
+              {
+                success_bool : success_bool,
+                email_str: email_str,
+                refreshed_token_str : refreshed_token_str
+              };
+
+            return json_response_obj;
+          };
+
+          request_body_data = req.body;
+          user_access_token_str = request_body_data.access_token_str;
+
+      json_response_obj = json_response_obj_factory(true, "test@test.com", create_refreshed_token(user_access_token_str));
+      res.status(200).json(json_response_obj);
     });
 
     // -- GLOBAL FUNCTIONS --
