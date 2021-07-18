@@ -1114,6 +1114,9 @@ exports.setApp = function(app, client)
 
     /*********************************************************************************************/
 
+    if(update_success_bool !== true)
+      update_success_bool = false;
+
     refreshed_token_str = create_refreshed_token(user_access_token_str);
     json_response_obj = json_response_obj_factory(update_success_bool, refreshed_token_str);
     res.status(200).json(json_response_obj);
