@@ -15,6 +15,7 @@
 |  get_ready_status                   |
 |  initialize_profile_individual      |
 |  initialize_profile_group           |
+|  update_profile                     |
 |  get_matches                        |
 |  send_password_reset                |
 |  reset_password                     |
@@ -980,6 +981,144 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END INITIALIZE_PROFILE_GROUP API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // UPDATE_PROFILE API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, update_fields_obj, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, refreshed_token_str)
+
+  app.post('/api/update_profile', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let update_fields_obj;
+    let user_access_token_str;
+
+    let display_name_str;
+    let phone_str;
+    let description_str;
+
+    // TO RETURN
+    let update_success_bool;
+    let refreshed_token_str;
+    let json_response_obj;
+    
+    let database;
+    let database_results_array;
+    let collection_str;
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (success_bool, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : success_bool,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    update_fields_obj = request_body_data.update_fields_obj;
+    user_access_token_str = request_body_data.access_token_str;
+
+    display_name_str = update_fields_obj.display_name_str;
+    phone_str = update_fields_obj.phone_str;
+    description_str = update_fields_obj.description_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str))
+    {
+      update_success_bool = false;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(update_success_bool, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      update_success_bool = false;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      json_response_obj = json_response_obj_factory(update_success_bool, refreshed_token_str);
+      res.status(200).json(json_response_obj);
+      return;
+    }    
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE USER IS FOUND IN THE DATABASE
+
+    // IF USER WISHES TO UPDATE THEIR DISPLAY NAME
+    if(display_name_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {display_name : display_name_str} } );
+        
+      update_success_bool = true;
+    }
+    
+    // IF USER WISHES TO UPDATE THEIR PHONE NUMBER
+    if(phone_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {phone : phone_str} } );
+        
+      update_success_bool = true;
+    }
+    
+    // IF USER WISHES TO UPDATE THEIR DESCRIPTION
+    if(description_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {description : description_str} } );
+        
+      update_success_bool = true;
+    }
+
+    /*********************************************************************************************/
+
+    refreshed_token_str = create_refreshed_token(user_access_token_str);
+    json_response_obj = json_response_obj_factory(update_success_bool, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END UPDATE_PROFILE API ENDPOINT
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
