@@ -122,6 +122,23 @@
     border-radius: 15px;
     overflow: visible;
 }
+.btn2
+{
+    position: relative;
+    display: inline-block;
+    padding: 20px 100px;
+    font-size: 24px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 15px;
+    overflow: visible;
+}
+
+.btn2:active 
+{ 
+    transform: translateY(4px);
+}
   
 .btn:active 
 { 
@@ -143,3 +160,68 @@
     right: 30%;
     bottom: 20%;
 }
+
+body{
+  background: url("D:/UCF/COP4331C/cop4331_largeproject/frontend/src/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.login-box{
+  background: white;
+  width: 300px;
+  height:350px;
+  padding: 40px;
+  position: absolute;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  border-radius: 28px;
+  padding: 10px;
+  border: 2px solid #292F36;
+  box-shadow: none;
+}
+
+.login-box h1{
+  color: #BF4342;
+  font-weight: 480;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.login-box input[type = "email"], .login-box input[type = "password"]{
+  border: 0;
+  background: white;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid #d9d9d9;
+  padding: 10px;
+  width: 250px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+  transition: 0.24s;
+}
+
+#login_page_bnt{
+  border: 0;
+  background: #BF4342;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid #d9d9d9;
+  padding: 10px;
+  width: 200px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+  transition: 0.24s;
+}
+
+.signup-box{
+
+}
+
