@@ -15,6 +15,8 @@
 |  get_ready_status                   |
 |  initialize_profile_individual      |
 |  initialize_profile_group           |
+|  update_profile                     |
+|  get_matches                        |
 |  send_password_reset                |
 |  reset_password                     |
 ***************************************/
@@ -982,6 +984,309 @@ exports.setApp = function(app, client)
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
+  // UPDATE_PROFILE API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, update_fields_obj, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, refreshed_token_str)
+
+  app.post('/api/update_profile', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let update_fields_obj;
+    let user_access_token_str;
+
+    let display_name_str;
+    let phone_str;
+    let description_str;
+
+    // TO RETURN
+    let update_success_bool;
+    let refreshed_token_str;
+    let json_response_obj;
+    
+    let database;
+    let database_results_array;
+    let collection_str;
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (success_bool, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : success_bool,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    update_fields_obj = request_body_data.update_fields_obj;
+    user_access_token_str = request_body_data.access_token_str;
+
+    display_name_str = update_fields_obj.display_name_str;
+    phone_str = update_fields_obj.phone_str;
+    description_str = update_fields_obj.description_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str))
+    {
+      update_success_bool = false;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(update_success_bool, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      update_success_bool = false;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      json_response_obj = json_response_obj_factory(update_success_bool, refreshed_token_str);
+      res.status(200).json(json_response_obj);
+      return;
+    }    
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE USER IS FOUND IN THE DATABASE
+
+    // IF USER WISHES TO UPDATE THEIR DISPLAY NAME
+    if(display_name_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {display_name : display_name_str} } );
+        
+      update_success_bool = true;
+    }
+    
+    // IF USER WISHES TO UPDATE THEIR PHONE NUMBER
+    if(phone_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {phone : phone_str} } );
+        
+      update_success_bool = true;
+    }
+    
+    // IF USER WISHES TO UPDATE THEIR DESCRIPTION
+    if(description_str !== undefined)
+    {
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {description : description_str} } );
+        
+      update_success_bool = true;
+    }
+
+    /*********************************************************************************************/
+
+    if(update_success_bool !== true)
+      update_success_bool = false;
+
+    refreshed_token_str = create_refreshed_token(user_access_token_str);
+    json_response_obj = json_response_obj_factory(update_success_bool, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END UPDATE_PROFILE API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // GET_MATCHES API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, output_select_str, access_token_str)
+  // OUTPUT: JSON OBJECT (matches_array, refreshed_token_str)
+  // A VALUE OF "e" FOR 'output_select_str' WILL GIVE AN EXTENDED VERSION OF 'matches_array'
+  // ASK FOR AN "a" FOR 'output_select_str' FOR AN ABRIDGED VERSION OF 'matches_array'
+  // ANY OTHER VALUE FOR 'output_select_str' WILL RESULT IN AN ABRIDGED VERSION OF 'matches_array'
+  app.post('/api/get_matches', async (req, res, next) =>
+  {
+
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let output_select_str;
+    let user_access_token_str;
+
+    // TO RETURN
+    let abridged_matches_array;
+    let matches_array = new Array();
+    let refreshed_token_str;
+    let json_response_obj;
+    
+    let database;
+    let database_results_array;
+    let collection_str;
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (matches_array, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            matches_array : matches_array,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+    
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    output_select_str = request_body_data.output_select_str;
+    user_access_token_str = request_body_data.access_token_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str))
+    {
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(matches_array, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    // IF FRONTEND NEVER PROVIDED AN OUTPUT SELECT OPTION
+    if(output_select_str === undefined)
+    {
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      json_response_obj = json_response_obj_factory(matches_array, refreshed_token_str);
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THAT WE HAVE A VALUE FOR OUTPUT SELECT
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      json_response_obj = json_response_obj_factory(matches_array, refreshed_token_str);
+      res.status(200).json(json_response_obj);
+      return;
+    }    
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE USER IS FOUND IN THE DATABASE
+
+    // IF USER IS A GROUP
+    if( is_this_collection_a_group(collection_str) )
+    {
+      abridged_matches_array = await find_individuals_that_match(user_email_str, database);
+      
+      // IF FRONTEND DID NOT SPECIFY 'e'XTENDED OUTPUT
+      if(output_select_str.toLowerCase() !== "e")
+      {
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        json_response_obj = json_response_obj_factory(abridged_matches_array, refreshed_token_str);
+        res.status(200).json(json_response_obj);
+        return;
+      }
+      
+      /*****************************************************************************/
+      // AT THIS POINT, WE CAN ASSUME FRONTEND SPECIFIED EXTENDED OUTPUT
+      
+      for(let i = 0; i < abridged_matches_array.length; ++i)
+      {
+        matches_array.push( await create_extended_matches_obj(abridged_matches_array[i], database) );
+      }
+    }
+    
+    // OTHERWISE, USER IS AN INDIVIDUAL
+    else
+    {
+      abridged_matches_array = await find_groups_that_match(user_email_str, database);
+      
+      // IF FRONTEND DID NOT SPECIFY 'e'XTENDED OUTPUT
+      if(output_select_str.toLowerCase() !== "e")
+      {
+        refreshed_token_str = create_refreshed_token(user_access_token_str);
+        json_response_obj = json_response_obj_factory(abridged_matches_array, refreshed_token_str);
+        res.status(200).json(json_response_obj);
+        return;
+      }
+      
+      /*****************************************************************************/
+      // AT THIS POINT, WE CAN ASSUME FRONTEND SPECIFIED EXTENDED OUTPUT
+      
+      for(let i = 0; i < abridged_matches_array.length; ++i)
+      {
+        matches_array.push( await create_extended_matches_obj(abridged_matches_array[i], database) );
+      }
+    }
+
+    /*********************************************************************************************/
+
+    refreshed_token_str = create_refreshed_token(user_access_token_str);
+    json_response_obj = json_response_obj_factory(matches_array, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END GET_MATCHES API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
   // SEND_PASSWORD_RESET API ENDPOINT
   // INPUT: JSON OBJECT (email_str)
   // OUTPUT: JSON OBJECT (success_bool)
@@ -1197,6 +1502,9 @@ exports.setApp = function(app, client)
   |  this_user_has_this_password                     |
   |  is_token_valid                                  |
   |  create_refreshed_token                          |
+  |  find_individuals_that_match                     |
+  |  find_groups_that_match                          |
+  |  create_extended_matches_obj                     |
   |  send_email                                      |
   |  create_code                                     |
   |  create_code_character (helper for create_code)  |
@@ -1413,6 +1721,167 @@ exports.setApp = function(app, client)
     }
     
     return refreshed_token_str;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS AN ARRAY OF EMAIL STRINGS OF INDIVIDUALS THAT MATCH WITH 'user_email_str'
+  // 'user_email_str' IS ASSUMED TO EXIST IN 'database'
+  // 'user_email_str' IS ASSUMED TO BE A GROUP
+  // IF NO INDIVIDUALS COULD BE FOUND THAT MATCH, AN EMPTY ARRAY IS RETURNED
+  async function find_individuals_that_match(user_email_str, database)
+  {
+    let email_array = new Array();
+    let database_results_array;
+    
+    let user_candidates_array;
+    let individual_candidates_array;
+
+    /*************************************************************************************/
+
+    database_results_array =
+      await database.collection("groups").find( {email : user_email_str} ).toArray();
+
+    user_candidates_array = database_results_array[0].candidates;
+
+    /*************************************************************************************/
+
+    // GET ALL DOCUMENTS IN THE INDIVIDUALS COLLECTION
+    database_results_array =
+      await database.collection("individuals").find().toArray();
+
+    // GO THROUGH ALL DOCUMENTS IN THE INDIVIDUALS COLLECTION
+    for(let i = 0; i < database_results_array.length; ++i)
+    {
+      individual_candidates_array = database_results_array[i].candidates;
+      
+      // GO THROUGH ALL CANDIDATES LISTED FOR THE INDIVIDUAL
+      for(let j = 0; j < individual_candidates_array.length; ++j)
+      {
+        // IF IT'S A MATCH, SAVE THE INDIVIDUAL'S EMAIL
+        if(individual_candidates_array[j].email === user_email_str)
+        {
+          if(individual_candidates_array[j].status >= 2 &&
+            get_status_towards_this_user(
+            database_results_array[i].email, user_candidates_array) >= 2)
+          {
+            email_array.push(database_results_array[i].email);
+          }
+          
+          break;
+        }
+      }
+      
+    } // END GO THROUGH ALL DOCUMENTS IN INDIVIDUALS COLLECTION
+    
+    return email_array;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS AN ARRAY OF EMAIL STRINGS OF GROUPS THAT MATCH WITH 'user_email_str'
+  // 'user_email_str' IS ASSUMED TO EXIST IN 'database'
+  // 'user_email_str' IS ASSUMED TO BE AN INDIVIDUAL
+  // IF NO GROUPS COULD BE FOUND THAT MATCH, AN EMPTY ARRAY IS RETURNED
+  async function find_groups_that_match(user_email_str, database)
+  {
+    let email_array = new Array();
+    let database_results_array;
+    
+    let user_candidates_array;
+    let group_candidates_array;
+
+    /*************************************************************************************/
+
+    database_results_array =
+      await database.collection("individuals").find( {email : user_email_str} ).toArray();
+
+    user_candidates_array = database_results_array[0].candidates;
+
+    /*************************************************************************************/
+
+    // GET ALL DOCUMENTS IN THE GROUPS COLLECTION
+    database_results_array =
+      await database.collection("groups").find().toArray();
+
+    // GO THROUGH ALL DOCUMENTS IN THE GROUPS COLLECTION
+    for(let i = 0; i < database_results_array.length; ++i)
+    {
+      group_candidates_array = database_results_array[i].candidates;
+      
+      // GO THROUGH ALL CANDIDATES LISTED FOR THE GROUP
+      for(let j = 0; j < group_candidates_array.length; ++j)
+      {
+        // IF IT'S A MATCH, SAVE THE GROUP'S EMAIL
+        if(group_candidates_array[j].email === user_email_str)
+        {
+          if(group_candidates_array[j].status >= 2 &&
+            get_status_towards_this_user(
+            database_results_array[i].email, user_candidates_array) >= 2)
+          {
+            email_array.push(database_results_array[i].email);
+          }
+          
+          break;
+        }
+      }
+      
+    } // END GO THROUGH ALL DOCUMENTS IN GROUPS COLLECTION
+    
+    return email_array;
+  }
+  
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS THE JSON OBJECT ELEMENTS FOR JOSEPH'S EXTENDED MATCHES ARRAY REQUEST FOR..
+  // ..'get_matches' API
+  // 'user_email_str' IS ASSUMED TO BE A VALID USER STORED IN 'database'
+  async function create_extended_matches_obj(user_email_str, database)
+  {
+    let collection_str =
+      await user_exists_in_this_collection(user_email_str, database);
+      
+    let database_results_array =
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+    
+    // EXTENDED INFORMATION
+    let display_name_str;
+    let phone_str;
+      
+    display_name_str = database_results_array[0].display_name;
+    phone_str = database_results_array[0].phone;
+    
+    let extended_matches_obj =
+      {
+        email_str : user_email_str,
+        display_name_str : display_name_str,
+        phone_str : phone_str
+      };
+      
+    return extended_matches_obj;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // GOES THROUGH 'candidates_array' TO FIND THE STATUS CODE AKA SWIPE STATUS TOWARDS..
+  // ..'user_email_str'
+  // RETURNS -1 IF 'candidates_array' IS EMPTY, OR IF 'user_email_str' IS NOT AN ENTRY IN..
+  // ..'candidates_array'
+  function get_status_towards_this_user(user_email_str, candidates_array)
+  {
+    let status_int = -1;
+    
+    // GO THROUGH ALL CANDIDATES
+    for(let i = 0; i < candidates_array.length; ++i)
+    {
+      if(candidates_array[i].email === user_email_str)
+      {
+        status_int = candidates_array[i].status;
+        break;
+      }
+    }
+    
+    return status_int;
   }
 
   /************************************* NEXT FUNCTION *******************************************/

@@ -512,7 +512,272 @@ exports.setApp = function(app, client)
   	res.status(200).json(json_response_obj);
     });
 
+   // -- GET_CANDIDATE --
+    app.post('/api/get_candidate', async (req, res, next) =>
+    {
+    let request_body_data;
+  	let user_email_str;
+  	let user_access_token_str;
+	let user_is_group_bool;
+
+  	let get_status_sucess_bool;
+  	let refreshed_token_str;
+  	let email_str;
+  	let json_response_obj;
+
+  	let database;
+    let database_results_array;
+	let candidates_results_array;
+  	let collection_str;
+  	let opposite_collection_str;
+	let canddiates;
+	let candidates_new;
+
+  	// Response Object Function
+  	const json_response_obj_factory =
+        function (success_bool, email_str, refreshed_token_str)
+        {
+          let json_response_obj =
+            {
+              success_bool : success_bool,
+			  email_str : email_str,
+              refreshed_token_str : refreshed_token_str
+            };
+
+          return json_response_obj;
+        };
+
+  	const error_no_token =
+  		function ()
+  		{
+  			return json_response_obj_factory(false, "", "");
+  		}
+
+  	const error_yes_token =
+  		function ()
+  		{
+  			return json_response_obj_factory(false, "", create_refreshed_token(user_access_token_str));
+  		}
+
+  	// Parse Data
+  	request_body_data = req.body;
+  	user_email_str = request_body_data.email_str;
+	user_is_group_bool = request_body_data.is_group_bool;
+  	user_access_token_str = request_body_data.access_token_str;
+
+  	// Check Token
+  	if(!is_token_valid(user_access_token_str))
+      {
+        json_response_obj = error_no_token();
+
+        res.status(200).json(json_response_obj);
+        return;
+      }
+
+  	// Connect to db
+  	try
+      {
+        database = client.db();
+      }
+      catch(error)
+      {
+        console.log(error.message);
+      }
+
+  	collection_str = await user_exists_in_this_collection(user_email_str, database);
+    if(collection_str == "groups")
+	{
+		opposite_collection_str = "individuals";
+	}
+	else
+	{
+		opposite_collection_str = "groups";
+	}
+  	if(!collection_str || !opposite_collection_str || collection_str == opposite_collection_str)
+    {
+      json_response_obj = error_yes_token();
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+	
+  	try
+	{
+  		database_results_array =
+  		await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+    }
+    catch
+    {
+    	json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+		return;
+    }
+  	user = database_results_array[0];
+	
+	try
+	{
+  		candidate_results_array =
+  		await database.collection(opposite_collection_str).find({ready_status : 2}).toArray();
+    }
+    catch
+    {
+    	json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+		return;
+    }
+  	candidates = candidate_results_array;
+	candidates_new = [];
+	
+	for(let x  = 0; x < candidates.length; x++)
+	{
+		if(user_is_group_bool == true)
+		{
+			if(
+				(user.candidate_individual_categories.game_development_bool && candidates[x].candidate_group_categories.game_development_bool ) ||
+				(user.candidate_individual_categories.app_development_bool && candidates[x].candidate_group_categories.app_development_bool ) ||
+				(user.candidate_individual_categories.web_development_bool && candidates[x].candidate_group_categories.web_development_bool ) ||
+				(user.candidate_individual_categories.robotics_bool && candidates[x].candidate_group_categories.robotics_bool ) ||
+				(user.candidate_individual_categories.graphic_design_bool && candidates[x].candidate_group_categories.graphic_design_bool ) ||
+				(user.candidate_individual_categories.writer_bool && candidates[x].candidate_group_categories.writer_bool ) ||
+				(user.candidate_individual_categories.marketing_bool && candidates[x].candidate_group_categories.marketing_bool ) ||
+				(user.candidate_individual_categories.networking_bool && candidates[x].candidate_group_categories.networking_bool ) ||
+				(user.candidate_individual_categories.construction_bool && candidates[x].candidate_group_categories.construction_bool ) ||
+				(user.candidate_individual_categories.lab_partners_bool && candidates[x].candidate_group_categories.lab_partners_bool ) ||
+				(user.candidate_individual_categories.research_bool && candidates[x].candidate_group_categories.research_bool ) ||
+				(user.candidate_individual_categories.other_bool && candidates[x].candidate_group_categories.other_bool )
+			)
+			{
+				candidates_new.push(candidates[x]);
+			}
+		}
+		else
+		{
+			if(
+				(user.candidate_group_categories.game_development_bool && candidates[x].candidate_individual_categories.game_development_bool ) ||
+				(user.candidate_group_categories.app_development_bool && candidates[x].candidate_individual_categories.app_development_bool ) ||
+				(user.candidate_group_categories.web_development_bool && candidates[x].candidate_individual_categories.web_development_bool ) ||
+				(user.candidate_group_categories.robotics_bool && candidates[x].candidate_individual_categories.robotics_bool ) ||
+				(user.candidate_group_categories.graphic_design_bool && candidates[x].candidate_individual_categories.graphic_design_bool ) ||
+				(user.candidate_group_categories.writer_bool && candidates[x].candidate_individual_categories.writer_bool ) ||
+				(user.candidate_group_categories.marketing_bool && candidates[x].candidate_individual_categories.marketing_bool ) ||
+				(user.candidate_group_categories.networking_bool && candidates[x].candidate_individual_categories.networking_bool ) ||
+				(user.candidate_group_categories.construction_bool && candidates[x].candidate_individual_categories.construction_bool ) ||
+				(user.candidate_group_categories.lab_partners_bool && candidates[x].candidate_individual_categories.lab_partners_bool ) ||
+				(user.candidate_group_categories.research_bool && candidates[x].candidate_individual_categories.research_bool ) ||
+				(user.candidate_group_categories.other_bool && candidates[x].candidate_individual_categories.other_bool )
+			)
+			{
+				candidates_new.push(candidates[x]);
+			}
+		}
+	}
+	
+	for(x = 0; x < candidates_new.length; x++)
+	{
+		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
+		{
+			if(get_status(user, candidates_new[x].email, user_is_group_bool) == 0)
+			{
+				json_response_obj = json_response_obj_factory(true, candidates_new[x].email, create_refreshed_token(user_access_token_str));
+				res.status(200).json(json_response_obj);
+				return;
+			}
+		}
+	}
+	
+	for(x = 0; x < candidates_new.length; x++)
+	{
+		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0)
+		{
+			if(get_status(user, candidates_new[x].email, user_is_group_bool) == 0)
+			{
+				json_response_obj = json_response_obj_factory(true, candidates_new[x].email, create_refreshed_token(user_access_token_str));
+				res.status(200).json(json_response_obj);
+				return;
+			}
+		}
+	}
+	
+	let reset = false;
+	
+	for(x = 0; x < candidates_new.length; x++)
+	{
+		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0 || get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
+		{
+			if(get_status(user, candidates_new[x].email, user_is_group_bool) == 1)
+			{
+				reset = true;
+				set_status(user, candidates_new[x].email, user_is_group_bool, 0);
+			}
+		}
+	}
+	
+	if(reset == false)
+	{
+		json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+		return;
+	}
+	
+	for(x = 0; x < candidates_new.length; x++)
+	{
+		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
+		{
+			if(get_status(user, candidates_new[x].email, user_is_group_bool) == 0)
+			{
+				json_response_obj = json_response_obj_factory(true, candidates_new[x].email, create_refreshed_token(user_access_token_str));
+				res.status(200).json(json_response_obj);
+				return;
+			}
+		}
+	}
+	
+	for(x = 0; x < candidates_new.length; x++)
+	{
+		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0)
+		{
+			if(get_status(user, candidates_new[x].email, user_is_group_bool) == 0)
+			{
+				json_response_obj = json_response_obj_factory(true, candidates_new[x].email, create_refreshed_token(user_access_token_str));
+				res.status(200).json(json_response_obj);
+				return;
+			}
+		}
+	}
+	
+	
+  	
+	
+	json_response_obj = error_yes_token();
+  	res.status(200).json(json_response_obj);
+	return;
+    });
+
     // -- GLOBAL FUNCTIONS --
+	function set_status(json, email, is_group, stat)
+	{
+		for(let x  = 0; x < json.candidates.length; x++)
+		{
+			if(json.candidates[x].email == email)
+			{
+				json.candidates[x].status = stat;
+				return;
+			}
+		}
+		return;
+	}
+	function get_status(json, email, is_group)
+	{
+		for(let x  = 0; x < json.candidates.length; x++)
+		{
+			if(json.candidates[x].email == email)
+			{
+				return json.candidates[x].status;
+			}
+		}
+		return 0;
+	}
+	
     function is_token_valid(access_token_str)
     {
       let my_token_functions = require("./createJWT.js");
