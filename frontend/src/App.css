@@ -162,7 +162,7 @@
 }
 
 body{
-  background: url("D:/UCF/COP4331C/cop4331_largeproject/frontend/src/background.png");
+  background: url("/background.png");
   background-size: cover;
   background-repeat: no-repeat;
 }
