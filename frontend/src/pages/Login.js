@@ -59,15 +59,18 @@ function Login()
     };
 
     return (
-        <div id='container'>
-            <div class='bar'>
-                <h1>Log In</h1><br/>
-                <input type="email" name="username" placeholder='email\username' ref={(c) => loginName = c}></input><br/>
-                <input type="password" name="password" placeholder='password' ref={(c) => loginPassword = c}></input><br/>
-                <button class='btn' id='login_page_bnt' onClick={doLogin}>Log In</button><br/>
-                <Link to={'/resetPassword'} >forget passwrod?</Link><br/>
+        <div id="container">
+            <img class='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
+          
+            <h1 className='top_title'>Kindling</h1><br/>
+            <form class="login-box">
+                <h1>Log In</h1>
+                <input type="email" name="username" placeholder='E-mail' ref={(c) => loginName = c}></input>
+                <input type="password" name="password" placeholder='Password' ref={(c) => loginPassword = c}></input>
+                <button class='btn2' id='login_page_bnt' onClick={doLogin}>Log In</button>
+                <Link to={'/resetPassword'} style={{ textDecoration: 'none'}}>forgot password?</Link>
                 <h2 id="loginResult">{message}</h2>
-            </div>
+            </form>
         </div>
     );
 }

@@ -53,21 +53,29 @@ function SignUp()
 
     return(
         <div id='signup1_container'>
-            <h1>Basic Information</h1>
-            <input type="text" id="singup_displayname" placeholder='displayname' ref={(c) => displayname = c}></input><br/>
-            <input type="tel" id="singup_phonenumber" placeholder='phonenumber' ref={(c) => phonenumber = c}></input><br/>
-            <input type="email" id="singup_email" placeholder='email' ref={(c) => email = c}></input><br/>
-            <input type="password" id="signup_password" placeholder='password' ref={(c) => password = c}></input><br/>
-            <input type="password" id="confirm_password" placeholder='confirm password' ref={(c) => confirm_password = c}></input><br/>
+            <img class='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
+            <h1 className='top_title'>Kindling</h1><br/>
+
+            <form class="signup-box">
+                <h1>Basic Information</h1>
+                <input type="text" id="singup_displayname" placeholder='displayname' ref={(c) => displayname = c}></input><br/>
+                <input type="tel" id="singup_phonenumber" placeholder='phonenumber' ref={(c) => phonenumber = c}></input><br/>
+                <input type="email" id="singup_email" placeholder='email' ref={(c) => email = c}></input><br/>
+                <input type="password" id="signup_password" placeholder='password' ref={(c) => password = c}></input><br/>
+                <input type="password" id="confirm_password" placeholder='confirm password' ref={(c) => confirm_password = c}></input><br/>
+            </form>
+            
+            <form class="userType-box">
             <h1>What are you looking for?</h1>
-            <h2>{checked ? 'Project' : 'Individual'}</h2>
-            {/* <Switch
-                checked={checked}
-                onChange={toIndividual}
-                className='switch_btn'
-            /><br/> */}
-            <span>{message}</span>
-            <button class='bnt' id='signup_bnt' onClick={doSignup}>Sign Up</button><br/>
+                <h2>{checked ? 'Project' : 'Individual'}</h2>
+                {/* <Switch
+                    checked={checked}
+                    onChange={toIndividual}
+                    className='switch_btn'
+                /><br/> */}
+                <span>{message}</span>
+                <button class='bnt' id='signup_bnt' onClick={doSignup}>Sign Up</button><br/>
+            </form>
         </div>
     );
 }

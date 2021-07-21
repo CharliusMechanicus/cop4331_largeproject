@@ -21,15 +21,17 @@ function MainPage()
           
           <h1 className='top_title'>Kindling</h1><br/>
           
-          {/* big icon */}
-          <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img><br/>
+          <div className='main_box'>
+            {/* big icon */}
+            <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img><br/>
           
-          {/* span */}
-          <h1 className='center_text'>Kindle An Innovation</h1><br/>
+            {/* span */}
+            <h1 className='center_text'>Kindle An Innovation</h1><br/>
           
-          {/* buttom */} {/* buttom */}
-          <button className='btn' id='signup_btn' onClick={toSignUp}>Sign Up</button>
-          <button className='btn' id='login_btn' onClick={toLogIn}>Log In</button><br/>
+            {/* buttom */} {/* buttom */}
+            <button className='btn' id='signup_btn' onClick={toSignUp}>Sign Up</button>
+            <button className='btn' id='login_btn' onClick={toLogIn}>Log In</button><br/>
+          </div>
         </div>
       </div>
   );
