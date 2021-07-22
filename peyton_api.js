@@ -5,7 +5,7 @@ exports.setApp = function(app, client)
   // -- GET_PROFILE_INDIVIDUAL --
     app.post('/api/get_profile_individual', async (req, res, next) =>
     {
-      let request_body_data;
+    let request_body_data;
   	let user_email_str;
   	let user_access_token_str;
 
@@ -53,7 +53,7 @@ exports.setApp = function(app, client)
   	user_access_token_str = request_body_data.access_token_str;
 
   	// Check Token
-  	if(!is_token_valid(user_access_token_str))
+  	if(!is_token_valid(user_access_token_str, user_email_str, "d"))
       {
         json_response_obj = error_no_token();
 
@@ -156,7 +156,7 @@ exports.setApp = function(app, client)
   	user_access_token_str = request_body_data.access_token_str;
 
   	// Check Token
-  	if(!is_token_valid(user_access_token_str))
+  	if(!is_token_valid(user_access_token_str, user_email_str, "d"))
       {
         json_response_obj = error_no_token();
 
@@ -259,7 +259,7 @@ exports.setApp = function(app, client)
   	user_access_token_str = request_body_data.access_token_str;
 
   	// Check Token
-  	if(!is_token_valid(user_access_token_str))
+  	if(!is_token_valid(user_access_token_str, user_email_str))
       {
         json_response_obj = error_no_token();
 
@@ -348,7 +348,7 @@ exports.setApp = function(app, client)
     // -- SWIPE_RIGHT --
     app.post('/api/swipe_right', async (req, res, next) =>
     {
-      let request_body_data;
+    let request_body_data;
   	let user_email_str;
   	let user_target_email_str;
   	let user_access_token_str;
@@ -398,7 +398,7 @@ exports.setApp = function(app, client)
   	user_access_token_str = request_body_data.access_token_str;
 
   	// Check Token
-  	if(!is_token_valid(user_access_token_str))
+  	if(!is_token_valid(user_access_token_str, user_email_str))
       {
         json_response_obj = error_no_token();
 
@@ -566,7 +566,7 @@ exports.setApp = function(app, client)
   	user_access_token_str = request_body_data.access_token_str;
 
   	// Check Token
-  	if(!is_token_valid(user_access_token_str))
+  	if(!is_token_valid(user_access_token_str, user_email_str))
       {
         json_response_obj = error_no_token();
 
@@ -778,29 +778,48 @@ exports.setApp = function(app, client)
 		return 0;
 	}
 	
-    function is_token_valid(access_token_str)
+  // RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
+  // 'user_email_str' IS THE USER (PRIMARY SUBJECT) OF AN API ENDPOINT
+  // 'disable_str' WILL DISABLE THE SECURITY FIX THAT RESOLVED THE ISSUE IN ALLOWING 'VALID'..
+  // ..TOKENS TO BE USED FOR ANOTHER USER - TO DISABLE, ENTER A VALUE OF 'd' OR 'D'
+  function is_token_valid(access_token_str, user_email_str, disable_str)
+  {
+    // IF THE SECURITY FIX HAS NOT BEEN DISABLED
+    if(disable_str !== "d" && disable_str !== "D")
     {
-      let my_token_functions = require("./createJWT.js");
+      let jwt = require("jsonwebtoken");
+      let user_data = jwt.decode(access_token_str, {complete:true});
+      let email_str_from_token = user_data.payload.email_str;
 
-      try
+      if(email_str_from_token !== user_email_str)
+        return false;
+    }
+
+    /*****************************************************************/
+    // AT THIS POINT, EVERYTHING IS THE SAME PRE SECURITY FIX
+
+    let my_token_functions = require("./createJWT.js");
+
+    try
+    {
+      if(my_token_functions.isExpired(access_token_str))
       {
-        if(my_token_functions.isExpired(access_token_str))
-        {
-          return false;
-        }
-
-        else
-        {
-          return true;
-        }
-      }
-
-      catch(error)
-      {
-        console.log(error.message);
         return false;
       }
+      
+      else
+      {
+        return true;
+      }
     }
+    
+    catch(error)
+    {
+      console.log(error.message);
+      return false;
+    }
+  }
+  
     // --
     function create_refreshed_token(access_token_str)
     {

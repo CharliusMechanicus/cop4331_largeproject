@@ -581,7 +581,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
 
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str))
+    if(!is_token_valid(user_access_token_str, user_email_str, "d"))
     {
       get_status_success_bool = false;
       user_ready_status_int = -1234;
@@ -721,7 +721,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
 
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str))
+    if(!is_token_valid(user_access_token_str, user_email_str))
     {
       success_bool = false;
       refreshed_token_str = "";
@@ -880,7 +880,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
 
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str))
+    if(!is_token_valid(user_access_token_str, user_email_str))
     {
       success_bool = false;
       refreshed_token_str = "";
@@ -1043,7 +1043,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
 
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str))
+    if(!is_token_valid(user_access_token_str, user_email_str))
     {
       update_success_bool = false;
       refreshed_token_str = "";
@@ -1179,7 +1179,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
 
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str))
+    if(!is_token_valid(user_access_token_str, user_email_str))
     {
       refreshed_token_str = "";
       
@@ -1676,10 +1676,27 @@ exports.setApp = function(app, client)
   /************************************* NEXT FUNCTION *******************************************/
 
   // RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
-  function is_token_valid(access_token_str)
+  // 'user_email_str' IS THE USER (PRIMARY SUBJECT) OF AN API ENDPOINT
+  // 'disable_str' WILL DISABLE THE SECURITY FIX THAT RESOLVED THE ISSUE IN ALLOWING 'VALID'..
+  // ..TOKENS TO BE USED FOR ANOTHER USER - TO DISABLE, ENTER A VALUE OF 'd' OR 'D'
+  function is_token_valid(access_token_str, user_email_str, disable_str)
   {
+    // IF THE SECURITY FIX HAS NOT BEEN DISABLED
+    if(disable_str !== "d" && disable_str !== "D")
+    {
+      let jwt = require("jsonwebtoken");
+      let user_data = jwt.decode(access_token_str, {complete:true});
+      let email_str_from_token = user_data.payload.email_str;
+
+      if(email_str_from_token !== user_email_str)
+        return false;
+    }
+
+    /*****************************************************************/
+    // AT THIS POINT, EVERYTHING IS THE SAME PRE SECURITY FIX
+
     let my_token_functions = require("./createJWT.js");
-    
+
     try
     {
       if(my_token_functions.isExpired(access_token_str))
