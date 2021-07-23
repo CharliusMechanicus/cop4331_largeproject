@@ -213,7 +213,8 @@ body {
 }
 
 .settings-header,
-.matchlist-header {
+.header-logo,
+.matchlist-btn {
   display: flex;
   background-color: transparent;
 }
@@ -222,7 +223,7 @@ body {
   justify-content: center;
 }
 
-.matchlist-header {
+.matchlist-btn {
   justify-content: flex-end;
 }
 
@@ -264,7 +265,7 @@ body {
 }
 
 .card {
-  color: #ffffff;
+  color: #000000;
   margin-top: 8%;
 }
 
@@ -273,3 +274,40 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+
+/* Remove in final */
+.footer-buttons {
+  flex-direction: column;
+}
+
+.settings-btn,
+.settings-btn:hover,
+.settings-btn:active
+.settings-btn:focus,
+.matchlist-btn,
+.matchlist-btn:hover,
+.matchlist-btn:active,
+.matchlist-btn:focus {
+  position: relative;
+  border-style: none;
+  border-color: transparent;
+  background-color: transparent;
+  padding: 0%;
+}
+
+/* .btn-check:active+.btn-primary, 
+.btn-check:checked+.btn-primary, 
+.btn-primary.active, 
+.btn-primary:active, 
+.show>.btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.btn-check:focus+.btn-primary, .btn-primary:focus {
+  color: #fff;
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: 0 0 0 0rem rgb(49 132 253 / 50%);
+} */
