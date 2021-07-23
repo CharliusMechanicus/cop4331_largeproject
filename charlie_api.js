@@ -19,6 +19,7 @@
 |  get_matches                        |
 |  send_password_reset                |
 |  reset_password                     |
+|  shove_user_into_database           |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -1485,6 +1486,100 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END RESET_PASSWORD API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // SHOVE_USER_INTO_DATABASE API ENDPOINT
+  
+  /****************************************************************** 
+  |   INPUT: JSON OBJECT (is_group_bool, user_to_shove_obj)         |
+  |                                                                 |
+  |   IF USER TO SHOVE IS AN INDIVIDUAL:                            |
+  |   {                                                             |
+  |     email : some_string,                                        |
+  |     password : some_string,                                     |
+  |     display_name : some_string,                                 |
+  |     phone : some_string,                                        |
+  |     individual_categories : empty_obj,                          |
+  |     description : some_string,                                  |
+  |     candidate_group_categories : obj_of_category_booleans,      |
+  |     ready_status : some_integer,                                |
+  |     candidates : array_of_json_objects                          |
+  |   }                                                             |
+  |                                                                 |
+  |   IF USER TO SHOVE IS A GROUP:                                  |
+  |   {                                                             |
+  |     email : some_string,                                        |
+  |     password : some_string,                                     |
+  |     display_name : some_string,                                 |
+  |     phone : some_string,                                        |
+  |     group_categories : empty_obj,                               |
+  |     description : some_string,                                  |
+  |     candidate_individual_categories : obj_of_category_booleans, |
+  |     ready_status : some_integer,                                |
+  |     candidates : array_of_json_objects                          |
+  |   }                                                             |
+  ******************************************************************/
+
+  // OUTPUT: JSON OBJECT (success_bool)
+  // NOT FOR PRODUCTION CODE - DEBUG/DEVELOPMENT PURPOSES ONLY
+  app.post('/secret_api/shove_user_into_database', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let is_group_bool;
+    let user_to_shove_obj;
+
+    // TO RETURN
+    let shove_success_bool = false;
+    let json_response_obj;
+
+    let database;
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    is_group_bool = request_body_data.is_group_bool;
+    user_to_shove_obj = request_body_data.user_to_shove_obj;
+
+    /*********************************************************************************************/
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    /*********************************************************************************************/
+
+    // IF USER TO SHOVE IS A GROUP
+    if(is_group_bool)
+    {
+      database.collection("groups").insertOne(user_to_shove_obj);
+      shove_success_bool = true;
+    }
+    
+    // OTHERWISE, USER TO SHOVE IS AN INDIVIDUAL
+    else
+    {
+      database.collection("individuals").insertOne(user_to_shove_obj);
+      shove_success_bool = true;
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : shove_success_bool};
+    res.status(200).json(json_response_obj);
+
+  }); // END SHOVE_USER_INTO_DATABASE
 
   /*********************************** END API ENDPOINTS *****************************************/
 
