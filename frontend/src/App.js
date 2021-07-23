@@ -6,6 +6,7 @@
 ************/
 import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 /***********
@@ -15,10 +16,11 @@ import MainPage from './pages/MainPage';
 import Login from './pages/Login';
 import Tags from './pages/Tags';
 import SignUp from './pages/SignUp';
+import InitializeProfile from './pages/InitializeProfile';
 import ResetPassword from './pages/ResetPassword';
-// import Home from './pages/Home';
-// import MatchList from './pages/MatchList';
-// import Settings from './pages/Settings';
+import Home from './pages/Home';
+import MatchList from './pages/MatchList';
+import Settings from './pages/Settings';
 import EmailVerification from './pages/EmailVerification';
 
 /***********************************************************************************************************/
@@ -48,10 +50,14 @@ function App() {
           <SignUp/>
         </Route>
 
+        <Route path="/InitializeProfile" exact>
+          <InitializeProfile/>
+        </Route>
+
         <Route path="/ResetPassword" exact>
           <ResetPassword/>
         </Route>
-{/* 
+
         <Route path="/Home" exact>
           <Home/>
         </Route>
@@ -62,7 +68,7 @@ function App() {
 
         <Route path="/Settings" exact>
           <Settings/>
-        </Route> */}
+        </Route>
 
         <Route path="/EmailVerification" exact>
           <EmailVerification/>
