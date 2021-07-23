@@ -5,28 +5,13 @@ import {Container, Row, Col, Offcanvas, Button, OffcanvasBody, OffcanvasHeader} 
 
 const options = [  
     {
-      name: 'Enable backdrop (default)',
+      // name: 'Enable backdrop (default)',
       scroll: false,
-      backdrop: true,
-    },
-    {
-      name: 'Disable backdrop',
-      scroll: false,
-      backdrop: false,
-    },
-    {
-      name: 'Enable body scrolling',
-      scroll: true,
-      backdrop: false,
-    },
-    {
-      name: 'Enable both scrolling & backdrop',
-      scroll: true,
       backdrop: true,
     },
   ];
   
-function OffCanvasExample({ name, ...props }) {
+function ShowSettings({...props }) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -34,12 +19,38 @@ function OffCanvasExample({ name, ...props }) {
 
     return (
         <>
-        <Button variant="primary" onClick={toggleShow} className="me-2">
-            {name}
+        <Button variant="dark" onClick={toggleShow} className="settings-btn">
+            <img className="person-icon" src="./person.png"></img>
         </Button>
+
         <Offcanvas show={show} onHide={handleClose} {...props}>
             <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Offcanvas</Offcanvas.Title>
+            <Offcanvas.Title>Settings</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+            Some text as placeholder. In real life you can have the elements you
+            have chosen. Like, text, images, lists, etc.
+            </Offcanvas.Body>
+        </Offcanvas>
+        </>
+    );
+}
+
+function ShowMatchList({...props }) {
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const toggleShow = () => setShow((s) => !s);
+
+    return (
+        <>
+        <Button variant="dark" onClick={toggleShow} className="settings-btn">
+            <img className="menu-icon" src="./menu.png"></img>
+        </Button>
+
+        <Offcanvas show={show} onHide={handleClose} {...props}>
+            <Offcanvas.Header closeButton>
+            <Offcanvas.Title>Matches</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
             Some text as placeholder. In real life you can have the elements you
@@ -69,25 +80,28 @@ function Home()
         },
     ]);
 
-    const[show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const toggleShow = () => setShow((s) => !s);
-
     return (
         <Container fluid className="content">
             <Row className="home-header">
                 <Col className="setiings-header">
-                    <Link to="/Settings">
-                        <img className="match-icon" src="./person.png"></img>
-                    </Link>
+                    {options.map((props, idx) => (
+                        <ShowSettings key={idx} {...props} />
+                    ))}
+                    
+                    {/* <Link to="/Settings">
+                        <img className="person-icon" src="./person.png"></img>
+                    </Link> */}
                 </Col>
                 <Col className="header-logo">
                     <img className="fire-icon" src='/kindling-icon.png'></img>
                 </Col>
-                <Col className="matchlist-header">
-                    <Link to="/MatchList">
+                <Col className="matchlist-btn">
+                    {options.map((props, idx) => (
+                        <ShowSettings key={idx} placement={'end'} {...props} />
+                    ))}
+                    {/* <Link to="/MatchList">
                         <img className="menu-icon" src="./menu.png"></img>
-                    </Link>
+                    </Link> */}
                 </Col>
             </Row>
             <Row className="center-piece">
@@ -109,11 +123,11 @@ function Home()
 
                     <img className="accept-icon" src="./heart.png"></img>
                 </Col>
-                <Col>
+                {/* <Col>
                 {options.map((props, idx) => (
-                    <OffCanvasExample key={idx} {...props} />
+                    <ShowSettings key={idx} {...props} />
                 ))}
-                </Col>
+                </Col> */}
             </Row>
         </Container>
     );
