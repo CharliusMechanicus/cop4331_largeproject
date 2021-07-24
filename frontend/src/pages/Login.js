@@ -16,39 +16,41 @@ function Login()
 
         var obj = {email_str:loginName.value,password_str:loginPassword.value};
         var js = JSON.stringify(obj);
-        var storage = require('../tokenStorage.js');
         
         try
         {    
-            const response = await fetch(api_path + 'api/login',
-                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+            const response = await fetch(api_path + 'api/login', {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var res = JSON.parse(await response.text());
+
+            var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
+            var user_data = JSON.stringify(user);
             
             // ready state is 0, send user to email verification page.
-            if( res['ready_state_int'] === 0)
+            if( res.ready_status_int == 0)
             {
                 window.location.href = '/emailverification';
             }
             // ready state is 1, send user to complete his personal file.
-            else if( res['ready_state_int'] === 1)
+            else if( res.ready_status_int == 1)
             {
-                window.location.href = '/Tags';
-            }
-            // Fail to login
-            else if( res['ready_state_int'] < 0)
-            {
-                setMessage('User/Password combination incorrect');
+                localStorage.setItem('user_data', user_data);
+
+                setMessage('Got 1');
+                
+                window.location.href = '/InitializeProfile';
             }
             // successfully logged in
+            else if ( res.ready_status_int == 2)
+            {localStorage.setItem('user_data', user_data);
+
+                setMessage('Got 2');
+                window.location.href = '/Home';
+            }
+            // Failed to login
             else
             {
-                storage.storeToken(res);
-                var user = {email:loginName.value, jwtToken:res.access_token_str};
-                localStorage.setItem('user_data', JSON.stringify(user));
-                
-                setMessage('');
-                window.location.href = '/Home';
+                setMessage('User/Password combination incorrect');
             }
         }
         catch(e)
@@ -60,17 +62,17 @@ function Login()
 
     return (
         <div id="container">
-            <img class='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
+            <img className='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
           
             <h1 className='top_title'>Kindling</h1><br/>
-            <form class="login-box">
+            <div className="login-box">
                 <h1>Log In</h1>
                 <input type="email" name="username" placeholder='E-mail' ref={(c) => loginName = c}></input>
                 <input type="password" name="password" placeholder='Password' ref={(c) => loginPassword = c}></input>
-                <button class='btn2' id='login_page_bnt' onClick={doLogin}>Log In</button>
+                <button className='btn2' id='login_page_bnt' onClick={doLogin}>Log In</button>
                 <Link to={'/resetPassword'} style={{ textDecoration: 'none'}}>forgot password?</Link>
                 <h2 id="loginResult">{message}</h2>
-            </form>
+            </div>
         </div>
     );
 }
