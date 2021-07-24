@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TinderCard from 'react-tinder-card';
 import {Link} from 'react-router-dom';
-import {Container, Row, Col, Offcanvas, Button, OffcanvasBody, OffcanvasHeader} from 'react-bootstrap';
+import {Container, Row, Col, Offcanvas, Button, OffcanvasBody, OffcanvasHeader, ListGroup} from 'react-bootstrap';
 
 const options = [  
     {
