@@ -20,6 +20,8 @@ To get started with your local environment run the following commands in this fo
 
 You will also have to run: `touch .env` and place the appropriate line of code from the discord into there.
 
+Last, but not least, navigate to the src folder and follow the workflow. 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
