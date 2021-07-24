@@ -14,7 +14,6 @@ import './App.css';
 ************/
 import MainPage from './pages/MainPage';
 import Login from './pages/Login';
-import Tags from './pages/Tags';
 import SignUp from './pages/SignUp';
 import InitializeProfile from './pages/InitializeProfile';
 import ResetPassword from './pages/ResetPassword';
@@ -40,10 +39,6 @@ function App() {
 
         <Route path="/Login" exact>
           <Login/>
-        </Route>
-
-        <Route path="/Tags" exact>
-          <Tags/>
         </Route>
 
         <Route path="/SignUp" exact>

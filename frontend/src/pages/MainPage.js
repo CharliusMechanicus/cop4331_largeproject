@@ -16,7 +16,7 @@ function MainPage()
       <div className="main-page" style={{backgroundImage: 'url("/background.png")'}}>
         <div>
           {/* Icon */}{/* span */}
-          <img class='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
+          <img className='fire' id='small_icon' src='/kindling-icon.png'></img><br/>
           
           <h1 className='top_title'>Kindling</h1><br/>
           
