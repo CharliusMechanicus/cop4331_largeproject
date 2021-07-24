@@ -14,13 +14,6 @@ Objective: Develop an app utilizing the MERN stack
 | Kiersten  | Mobile App  |
 | Joseph  | Mobile App  |
 
-## Task list
-
-- [X] Setup github
-- [ ] Setup Heroku
-- [ ] Integrate github and Heroku
-- [ ] Come up with Project Title
-
 ### MERN Stack Technology
 Web App (React.JS)
 Mobile App (React Native)
