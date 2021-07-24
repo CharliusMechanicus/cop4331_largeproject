@@ -25,11 +25,49 @@ function ShowSettings({...props }) {
 
         <Offcanvas show={show} onHide={handleClose} {...props}>
             <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Settings</Offcanvas.Title>
+                <Offcanvas.Title>Settings</Offcanvas.Title>
             </Offcanvas.Header>
+
             <Offcanvas.Body>
-            Some text as placeholder. In real life you can have the elements you
-            have chosen. Like, text, images, lists, etc.
+                <Container fluid className="settings-block">
+                    <Row className="settings-content">
+                        <Row className="input-block">
+                            <h3>Name</h3>
+                            <input type="text" id="update_name" placeholder='displayname'></input>
+                        </Row>
+                        <Row className="input-block">
+                            <h3>Phone Number</h3>
+                            <input type="tel" id="update_phonenumber" placeholder='phonenumber'></input>
+                        </Row>
+                        <Row className="input-block">
+                            <h3>Description</h3>
+                            <input type="text" id="update_description" placeholder='description'></input>
+                        </Row>
+                    </Row>
+
+                    <Row className="btn-group">
+                        <Row>
+                            <button className='logout-btn' id='logout_bnt'>Log Out</button>
+                        </Row>
+                        <Row>
+                            <button className='update-btn' id='update_bnt'>Update</button>
+                        </Row>
+                    </Row>
+                </Container>
+
+                {/* Backup */}
+                {/* <div className="settings-block">
+                    <h3>Name</h3>
+                    <input type="text" id="update_name" placeholder='displayname'></input>
+                    <h3>Phone Number</h3>
+                    <input type="tel" id="update_phonenumber" placeholder='phonenumber'></input>
+                    <h3>Description</h3>
+                    <input type="text" id="update_description" placeholder='description'></input>
+                    <div className="btn-group">
+                        <button className='logout-btn' id='logout_bnt'>Log Out</button>
+                        <button className='update-btn' id='update_bnt'>Update</button>
+                    </div>
+                </div> */}
             </Offcanvas.Body>
         </Offcanvas>
         </>
@@ -50,11 +88,14 @@ function ShowMatchList({...props }) {
 
         <Offcanvas show={show} onHide={handleClose} {...props}>
             <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Matches</Offcanvas.Title>
+                <Offcanvas.Title>Matches</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-            Some text as placeholder. In real life you can have the elements you
-            have chosen. Like, text, images, lists, etc.
+                <Container className="matchlist-block">
+                    <ListGroup>
+                        <span className="matches-block"></span>
+                    </ListGroup>
+                </Container>
             </Offcanvas.Body>
         </Offcanvas>
         </>
@@ -87,21 +128,14 @@ function Home()
                     {options.map((props, idx) => (
                         <ShowSettings key={idx} {...props} />
                     ))}
-                    
-                    {/* <Link to="/Settings">
-                        <img className="person-icon" src="./person.png"></img>
-                    </Link> */}
                 </Col>
                 <Col className="header-logo">
                     <img className="fire-icon" src='/kindling-icon.png'></img>
                 </Col>
                 <Col className="matchlist-btn">
                     {options.map((props, idx) => (
-                        <ShowSettings key={idx} placement={'end'} {...props} />
+                        <ShowMatchList key={idx} placement={'end'} {...props} />
                     ))}
-                    {/* <Link to="/MatchList">
-                        <img className="menu-icon" src="./menu.png"></img>
-                    </Link> */}
                 </Col>
             </Row>
             <Row className="center-piece">
@@ -123,11 +157,6 @@ function Home()
 
                     <img className="accept-icon" src="./heart.png"></img>
                 </Col>
-                {/* <Col>
-                {options.map((props, idx) => (
-                    <ShowSettings key={idx} {...props} />
-                ))}
-                </Col> */}
             </Row>
         </Container>
     );
