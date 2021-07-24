@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import storage from '../tokenStorage.js';
-import '../App.css';
 
 export default function InitializeProfile()
 {
@@ -24,11 +23,33 @@ export default function InitializeProfile()
     var description;
     var token = JSON.parse(localStorage.getItem('user_data'));
     
-    var profile = {
+    var profile = token.is_group ? 
+    {
         email_str: token.email,
         group_categories_obj: null,
         description_str: '',
         candidate_individual_categories_obj: {
+          game_development_bool: game_development,
+          app_development_bool: app_development,
+          web_development_bool: web_development,
+          robotics_bool: robotics,
+          graphic_design_bool: graphic_design,
+          writer_bool: writer,
+          marketing_bool: marketing,
+          networking_bool: networking,
+          construction_bool: construction,
+          lab_partners_bool: lab_partners,
+          research_bool: research,
+          other_bool: other
+        },
+        access_token_str: token.jwtToken,
+    } 
+    :
+    {
+        email_str: token.email,
+        individual_categories_obj: null,
+        description_str: '',
+        candidate_group_categories_obj: {
           game_development_bool: game_development,
           app_development_bool: app_development,
           web_development_bool: web_development,
@@ -48,11 +69,18 @@ export default function InitializeProfile()
     const save_tages = async event =>
     {
         var num_select = 0;
-        for (var obj in profile.candidate_individual_categories_obj)
-        {
-            if (profile.candidate_individual_categories_obj[obj])
-                num_select++;
-        }
+        if (token.is_group)
+            for (var obj in profile.candidate_individual_categories_obj)
+            {
+                if (profile.candidate_individual_categories_obj[obj])
+                    num_select++;
+            }
+        else
+            for (var obj in profile.candidate_group_categories_obj)
+            {
+                if (profile.candidate_group_categories_obj[obj])
+                    num_select++;
+            }
 
         if (num_select < 1)
             setMessage('Please select at least one fileds.');
@@ -110,25 +138,25 @@ export default function InitializeProfile()
             { showDescribetion ? 
                 <div id='signup_description'>
                     <h1>Add some describetion</h1><br/>
-                    <input type="text" class="description" placeholder='description' ref={(c) => description = c}></input><br/>
+                    <input type="text" className="description" placeholder='description' ref={(c) => description = c}></input><br/>
                     <span>{message}</span><br/>
-                    <button class='btn' onClick={save_profile}>Save</button>
+                    <button className='btn' onClick={save_profile}>Save</button>
                 </div>
                 :
                 <div class='signup_tags'>
                     <h1>What are your interests</h1>
-                    <input type='button' class='select_btn' onClick={() => set_game_development(!game_development)} value='game development'/>
-                    <input type='button' class='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/><br/>
-                    <input type='button' class='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
-                    <input type='button' class='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/><br/>
-                    <input type='button' class='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
-                    <input type='button' class='select_btn' onClick={() => set_writer(!writer)}  value='writer'/><br/>
-                    <input type='button' class='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
-                    <input type='button' class='select_btn' onClick={() => set_networking(!networking)}  value='networking'/><br/>
-                    <input type='button' class='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
-                    <input type='button' class='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/><br/>
-                    <input type='button' class='select_btn' onClick={() => set_research(!research)}  value='research'/>
-                    <input type='button' class='select_btn' onClick={() => set_other(!other)}  value='other'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_game_development(!game_development)} value='game development'/>
+                    <input type='button' className='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
+                    <input type='button' className='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
+                    <input type='button' className='select_btn' onClick={() => set_writer(!writer)}  value='writer'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
+                    <input type='button' className='select_btn' onClick={() => set_networking(!networking)}  value='networking'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
+                    <input type='button' className='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/><br/>
+                    <input type='button' className='select_btn' onClick={() => set_research(!research)}  value='research'/>
+                    <input type='button' className='select_btn' onClick={() => set_other(!other)}  value='other'/><br/>
                     <span>{message}</span><br/>
                     <button class='btn' onClick={save_tages}>Next</button><br/>
                 </div>
