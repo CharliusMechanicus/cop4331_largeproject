@@ -476,6 +476,8 @@ exports.setApp = function(app, client)
 
   	for(x = 0; x < database_results_array.length; x++)
   	{
+		if(database_results_array[x].email == user_target_email_str)
+		{
   		for(let y = 0; y < database_results_array[x].candidates.length; y++)
   		{
   			if(database_results_array[x].candidates[y].email == user_email_str)
@@ -483,14 +485,15 @@ exports.setApp = function(app, client)
 				if(database_results_array[x].candidates[y].status == 2 || database_results_array[x].candidates[y].status == 3)
   				{
 					console.log("New");
-					console.log(x);
-					console.log(y);
+					console.log(database_results_array[x].email);
+					console.log(database_results_array[x].candidates[y].email);
   					match_bool = true;
   					candidates_obj_array[candidates_index].status = 3;
   				}
   				break;
   			}
   		}
+		}
   	}
 
   	try
