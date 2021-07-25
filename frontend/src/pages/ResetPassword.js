@@ -23,7 +23,7 @@ function ResetPassword()
             
             if( res['success_bool'] == false )
             {
-                setMessage('* Unexpect error, please register first.');
+                setMessage('* Unexpected error, please register first.');
             }
             else
             {
@@ -77,12 +77,12 @@ function ResetPassword()
     return (
         <div id='reset_password_div'>
             { showSendEmail ?
-            <div className='email_verification'>
+            <form class='sendEmail'>
                 <h1>Email Verification</h1>
-                <input type='email' className='reset_input' ref={(c) => email = c} placeholder='email'></input><br/>
-                <h2>{message}</h2><br/><br/><br/>
-                <button className='btn' id='reset_email_verify_btn' onClick={sendResetEmail}>Send Rest Email</button>
-            </div>
+                <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
+                <h2>{message}</h2>
+                <button class='btn' id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
+            </form>
             :
             <div class='reset_password'>
                 <h1>Reset Password</h1><br/>
@@ -98,3 +98,11 @@ function ResetPassword()
 }
 
 export default ResetPassword;
+
+
+{/* <div className='email_verification'>
+    <h1>Email Verification</h1>
+    <input type='email' className='reset_input' ref={(c) => email = c} placeholder='email'></input><br/>
+    <h2>{message}</h2><br/><br/><br/>
+    <button className='btn' id='reset_email_verify_btn' onClick={sendResetEmail}>Send Rest Email</button>
+</div> */}
