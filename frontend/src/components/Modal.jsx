@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-
 import styled from 'styled-components';
 
 const Background = styled.div`
@@ -38,7 +37,7 @@ const Modal = ({isOpen, close, children}) => {
     <Background>
         <Content>{children}</Content>
     </Background>,
-     portalRoot);
+    portalRoot);
 }
 
 export default Modal;

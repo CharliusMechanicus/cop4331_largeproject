@@ -10,6 +10,7 @@ function SignUp()
     const [message,setMessage] = useState('');
 
     const [checked, setChecked] = useState(false);
+    const [isOpen, setOpen] = useState(false);
     const toIndividual = nextChecked => {
         setChecked(nextChecked);
     }
