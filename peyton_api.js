@@ -207,7 +207,7 @@ exports.setApp = function(app, client)
   	res.status(200).json(json_response_obj);
     });
 
-
+/*
     // -- SWIPE_LEFT --
     app.post('/api/swipe_left', async (req, res, next) =>
     {
@@ -343,7 +343,7 @@ exports.setApp = function(app, client)
   	}
   	res.status(200).json(json_response_obj);
     });
-
+*/
 
     // -- SWIPE_RIGHT --
     app.post('/api/swipe_right', async (req, res, next) =>

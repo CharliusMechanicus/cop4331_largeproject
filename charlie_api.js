@@ -17,6 +17,7 @@
 |  initialize_profile_group           |
 |  update_profile                     |
 |  get_matches                        |
+|  swipe_left                         |
 |  send_password_reset                |
 |  reset_password                     |
 |  shove_user_into_database           |
@@ -1288,6 +1289,138 @@ exports.setApp = function(app, client)
 
   /********************************** NEXT API ENDPOINT ******************************************/
 
+  // SWIPE_LEFT API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, target_email_str, access_token_str)
+  // OUTPUT: JSON OBJECT (success_bool, refreshed_token_str)
+  app.post('/api/swipe_left', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let target_email_str;
+    let user_access_token_str;
+
+    let user_candidates_array;
+    let candidates_array_index;
+
+    // TO RETURN
+    let success_bool;
+    let refreshed_token_str;
+    let json_response_obj;
+    
+    let database;
+    let database_results_array;
+    let collection_str;
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (success_bool, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : success_bool,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    target_email_str = request_body_data.target_email_str;
+    user_access_token_str = request_body_data.access_token_str;
+
+    /*********************************************************************************************/
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str, user_email_str))
+    {
+      success_bool = false;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(success_bool, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+
+    /*********************************************************************************************/
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      success_bool = false;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj = json_response_obj_factory(success_bool, refreshed_token_str);
+      res.status(200).json(json_response_obj);
+      return;
+    }    
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE USER IS FOUND IN THE DATABASE
+
+    user_candidates_array = await get_candidates_array(user_email_str, collection_str, database);
+
+    candidates_array_index =
+      is_this_user_in_this_candidates_array(target_email_str, user_candidates_array);
+
+    // IF 'target_email_str' IS NOT FOUND IN 'user_candidates_array'
+    if(candidates_array_index < 0)
+    {
+      user_candidates_array.push( {email : target_email_str, status : 1} );
+      
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {candidates : user_candidates_array} } );
+        
+      success_bool = true;
+    }
+
+    // OTHERWISE, 'target_email_str' WAS FOUND IN 'user_candidates_array'
+    else
+    {
+      user_candidates_array[candidates_array_index].status = 1;
+      
+      database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {candidates : user_candidates_array} } );
+        
+      success_bool = true;
+    }
+
+    /*********************************************************************************************/
+
+    refreshed_token_str = create_refreshed_token(user_access_token_str);
+    json_response_obj = json_response_obj_factory(success_bool, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END SWIPE_LEFT API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
   // SEND_PASSWORD_RESET API ENDPOINT
   // INPUT: JSON OBJECT (email_str)
   // OUTPUT: JSON OBJECT (success_bool)
@@ -1600,6 +1733,8 @@ exports.setApp = function(app, client)
   |  find_individuals_that_match                     |
   |  find_groups_that_match                          |
   |  create_extended_matches_obj                     |
+  |  get_candidates_array                            |
+  |  is_this_user_in_this_candidates_array           |
   |  send_email                                      |
   |  create_code                                     |
   |  create_code_character (helper for create_code)  |
@@ -1971,6 +2106,42 @@ exports.setApp = function(app, client)
       };
       
     return extended_matches_obj;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS THE CANDIDATES ARRAY OF 'user_email_str'
+  // 'user_email_str' IS ASSUMED TO EXIST IN 'database' IN THE COLLECTION 'collection_str'
+  async function get_candidates_array(user_email_str, collection_str, database)
+  {
+    let database_results_array =
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+      
+    let user_candidates_array = database_results_array[0].candidates;
+    return user_candidates_array;
+  }
+  
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // CHECKS TO SEE IF 'email_str' IS FOUND IN 'candidates_array'
+  // IF FOUND, RETURNS THE ARRAY INDEX IN 'candidates_array'
+  // IF NOT FOUND, RETURNS -1
+  function is_this_user_in_this_candidates_array(email_str, candidates_array)
+  {
+    let array_index = -1;
+    
+    // GO THROUGH ALL CANDIDATES
+    for(let i = 0; i < candidates_array.length; ++i)
+    {
+      // IF 'email_str' IS THE CANDIDATE
+      if(candidates_array[i].email === email_str)
+      {
+        array_index = i;
+        break;
+      }
+    }
+    
+    return array_index;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
