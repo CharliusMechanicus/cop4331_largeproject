@@ -17,7 +17,6 @@
 |  initialize_profile_group           |
 |  update_profile                     |
 |  get_matches                        |
-|  swipe_left                         |
 |  send_password_reset                |
 |  reset_password                     |
 |  shove_user_into_database           |
