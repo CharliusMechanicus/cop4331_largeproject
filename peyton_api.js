@@ -427,88 +427,92 @@ exports.setApp = function(app, client)
       }
   	else
   	{
-  		try
+  	try
+  	{
+  		database_results_array =
+  		await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+    }
+    catch
+    {
+    	json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+    }
+
+  	candidates_obj_array = database_results_array[0].candidates;
+
+  	for(let x = 0; x < candidates_obj_array.length; x++)
+  	{
+  		if(candidates_obj_array[x].email == user_target_email_str)
   		{
-  			database_results_array =
-  				await database.collection(collection_str).find( {email : user_email_str} ).toArray();
-      }
-    	catch
-    	{
-    		json_response_obj = error_yes_token();
-        res.status(201).json(json_response_obj);
-    	}
-
-  			candidates_obj_array = database_results_array[0].candidates;
-
-  			for(let x = 0; x < candidates_obj_array.length; x++)
-  			{
-  				if(candidates_obj_array[x].email == user_target_email_str)
-  				{
-  					candidates_index = x;
-  					break;
-  				}
-  			}
-  			if(candidates_index == -1)
-  			{
-  				let new_json_obj =
-  				{
-  					email : user_target_email_str,
-  					status : 2
-  				};
-  				candidates_obj_array.push(new_json_obj);
-          candidates_index = candidates_obj_array.length - 1;
-  			}
-  			else
-  			{
-  				candidates_obj_array[candidates_index].status = 2;
-  			}
-
-  			try
-  			{
-  				database_results_array =
-  					await database.collection(opposite_collection_str).find().toArray();
-        }
-    		catch
-    		{
-    			json_response_obj = error_yes_token();
-          res.status(202).json(json_response_obj);
-    		}
-
-  				for(x = 0; x < database_results_array.length; x++)
-  				{
-  					for(let y = 0; y < database_results_array[x].candidates.length; y++)
-  					{
-  						if(database_results_array[x].candidates[y].email == user_email_str)
-  						{
-  							if(database_results_array[x].candidates[y].status == 2)
-  							{
-  								match_bool = true;
-  								candidates_obj_array[candidates_index].status = 3;
-  							}
-  							break;
-  						}
-  					}
-  				}
-
-
-  				try
-  				{
-  					database.collection(collection_str).updateOne( {email : user_email_str},
-  						{ $set : {candidates : candidates_obj_array} } );
-
-  					json_response_obj =
-  						json_response_obj_factory(
-  							true,
-  							match_bool,
-  							create_refreshed_token(user_access_token_str));
-  				}
-  				catch
-  				{
-  					json_response_obj = error_yes_token();
-            res.status(203).json(json_response_obj);
-  				}
-
+			candidates_index = x;
+  			break;
+  		}
   	}
+  	if(candidates_index == -1)
+  	{
+  		let new_json_obj =
+  		{
+  			email : user_target_email_str,
+  			status : 2
+  		};
+  		candidates_obj_array.push(new_json_obj);
+        candidates_index = candidates_obj_array.length - 1;
+  	}
+  	else
+  	{
+  		candidates_obj_array[candidates_index].status = 2;
+  	}
+
+  	try
+  	{
+  		database_results_array =
+  		await database.collection(opposite_collection_str).find().toArray();
+    }
+    catch
+    {
+    	json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+    }
+
+  	for(x = 0; x < database_results_array.length; x++)
+  	{
+  		for(let y = 0; y < database_results_array[x].candidates.length; y++)
+  		{
+  			if(database_results_array[x].candidates[y].email == user_email_str)
+  			{
+				if(database_results_array[x].candidates[y].status == 2 || database_results_array[x].candidates[y].status == 3)
+  				{
+					console.log("New");
+					console.log(x);
+					console.log(y);
+  					match_bool = true;
+  					candidates_obj_array[candidates_index].status = 3;
+  				}
+  				break;
+  			}
+  		}
+  	}
+
+  	try
+  	{
+		database.collection(collection_str).updateOne( {email : user_email_str},
+  		{ $set : {candidates : candidates_obj_array} } );
+
+  		json_response_obj =
+  			json_response_obj_factory(
+  			true,
+  			match_bool,
+  			create_refreshed_token(user_access_token_str));
+		res.status(200).json(json_response_obj);
+		return;
+  	}
+  	catch
+  	{
+  		json_response_obj = error_yes_token();
+        res.status(200).json(json_response_obj);
+		return;
+  	}
+	}
   	res.status(200).json(json_response_obj);
     });
 
