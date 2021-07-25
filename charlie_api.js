@@ -1600,6 +1600,8 @@ exports.setApp = function(app, client)
   |  find_individuals_that_match                     |
   |  find_groups_that_match                          |
   |  create_extended_matches_obj                     |
+  |  get_candidates_array                            |
+  |  is_this_user_in_this_candidates_array           |
   |  send_email                                      |
   |  create_code                                     |
   |  create_code_character (helper for create_code)  |
@@ -1971,6 +1973,42 @@ exports.setApp = function(app, client)
       };
       
     return extended_matches_obj;
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // RETURNS THE CANDIDATES ARRAY OF 'user_email_str'
+  // 'user_email_str' IS ASSUMED TO EXIST IN 'database' IN THE COLLECTION 'collection_str'
+  async function get_candidates_array(user_email_str, collection_str, database)
+  {
+    let database_results_array =
+      await database.collection(collection_str).find( {email : user_email_str} ).toArray();
+      
+    let user_candidates_array = database_results_array[0].candidates;
+    return user_candidates_array;
+  }
+  
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // CHECKS TO SEE IF 'email_str' IS FOUND IN 'candidates_array'
+  // IF FOUND, RETURNS THE ARRAY INDEX IN 'candidates_array'
+  // IF NOT FOUND, RETURNS -1
+  function is_this_user_in_this_candidates_array(email_str, candidates_array)
+  {
+    let array_index = -1;
+    
+    // GO THROUGH ALL CANDIDATES
+    for(let i = 0; i < candidates_array.length; ++i)
+    {
+      // IF 'email_str' IS THE CANDIDATE
+      if(candidates_array[i].email === email_str)
+      {
+        array_index = i;
+        break;
+      }
+    }
+    
+    return array_index;
   }
 
   /************************************* NEXT FUNCTION *******************************************/
