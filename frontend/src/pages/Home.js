@@ -32,7 +32,7 @@ function ShowSettings({...props }) {
         var fields = {};
 
         if (update_name.value != '')
-            fields['display_name_str'] = update_name.value;
+            fields['display_name_str'] = update_name.value;        
 
         if (update_phonenumber.value != '')
             fields['phone_str'] = update_phonenumber.value;
