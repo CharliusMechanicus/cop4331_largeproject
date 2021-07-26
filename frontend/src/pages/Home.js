@@ -86,15 +86,15 @@ function ShowSettings({...props }) {
                     <Row className="settings-content">
                         <Row className="input-block">
                             <h3>Name</h3>
-                            <input type="text" id="update_name" placeholder='displayname'></input>
+                            <input type="text" id="update_name" placeholder='displayname' ref={(c) => update_name = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Phone Number</h3>
-                            <input type="tel" id="update_phonenumber" placeholder='phonenumber'></input>
+                            <input type="tel" id="update_phonenumber" placeholder='phonenumber' ref={(c) => update_phonenumber = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Description</h3>
-                            <input type="text" id="update_description" placeholder='description'></input>
+                            <input type="text" id="update_description" placeholder='description' ref={(c) => update_description = c}></input>
                         </Row>
                     </Row>
 
@@ -168,9 +168,19 @@ function ShowMatchList({...props }) {
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Container className="matchlist-block">
-                    <ListGroup>
+                    {match_list && match_list.map((list) =>
+                        <li key={list.name}>
+                            <div className='match_list'>
+                                <span className='match_list_name'>{list.display_name_str}</span><br/>
+                                <span className='match_list_email'>{list.email_str}</span><br/>
+                                <span className='match_list_phone'>{list.phone_str}</span><br/>
+                            </div>
+                        </li>
+                    )}
+                    
+                    {/* <ListGroup>
                         <span className="matches-block"></span>
-                    </ListGroup>
+                    </ListGroup> */}
                 </Container>
             </Offcanvas.Body>
         </Offcanvas>
