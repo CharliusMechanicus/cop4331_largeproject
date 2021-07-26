@@ -1,52 +1,48 @@
 import React, { useState, useEffect } from "react";
-import '../App.css';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-
-function createData(name, email, phone_number) {
-    return { name, email, phone_number};
-  }
-  
-  const rows = [
-    createData('Frozen yoghurt', 'aaa@gmail.com','656655'),
-    createData('who ever', 'aaa@gmail.com','6565656'),
-    createData('Foghurt', 'aaa@gmail.com', '656665'),
-    createData('Froyoghurt', 'aaa@gmail.com','65656'),
-    createData('Frourt', 'aaa@gmail.com','6565656465'),
-  ];
 
 function MatchList()
 {
+    var user_data = localStorage.getItem('user_data');
+    var token = JSON.parse(user_data);
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [match_list, setList] = useState(null);
+    var obj = {email_str:token.email,output_select_str:'e',access_token_str:token.jwtToken};
+    var js = JSON.stringify(obj);
+
+    useEffect(() => 
+    {
+        fetch(api_path + 'api/get_matches',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then(res => {
+            return res.json();
+        })
+        .then(res => {
+            var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
+            var user_data = JSON.stringify(user);
+            localStorage.setItem('user_data', user_data);
+
+            setList(res.matches_array);
+        });
+    },[]);
+
+    function go_back_card()
+    {
+        window.location.href = '/Home';
+    }
+
     return (
-        <div className='match-list'>
+        <div class='match_list'>
             <span>Match List</span><br/>
-            <TableContainer component={Paper}>
-                <Table className='match-list' aria-label="simple table">
-                    <TableHead>
-                    <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell align="center">email</TableCell>
-                        <TableCell align="center">phone number</TableCell>
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {rows.map((row) => (
-                        <TableRow key={row.name}>
-                        <TableCell component="th" scope="row">
-                            {row.name}
-                        </TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.phone_number}</TableCell>
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {match_list && match_list.map((list) =>
+                <li key={list.name}>
+                    <div className='match_list'>
+                        <span className='match_list_name'>{list.display_name_str}</span><br/>
+                        <span className='match_list_email'>{list.email_str}</span><br/>
+                        <span className='match_list_phone'>{list.phone_str}</span><br/>
+                    </div>
+                </li>
+            )}
+            <button className='btn' onClick={go_back_card}>Back to Home</button>
         </div>
     );
 }
