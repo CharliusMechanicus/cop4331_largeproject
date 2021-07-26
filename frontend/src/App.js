@@ -18,8 +18,6 @@ import SignUp from './pages/SignUp';
 import InitializeProfile from './pages/InitializeProfile';
 import ResetPassword from './pages/ResetPassword';
 import Home from './pages/Home';
-import MatchList from './pages/MatchList';
-import Settings from './pages/Settings';
 import EmailVerification from './pages/EmailVerification';
 
 /***********************************************************************************************************/
@@ -55,14 +53,6 @@ function App() {
 
         <Route path="/Home" exact>
           <Home/>
-        </Route>
-
-        <Route path="/MatchList" exact>
-          <MatchList/>
-        </Route>
-
-        <Route path="/Settings" exact>
-          <Settings/>
         </Route>
 
         <Route path="/EmailVerification" exact>
