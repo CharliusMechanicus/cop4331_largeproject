@@ -26,7 +26,7 @@ export default function InitializeProfile()
     var profile = token.is_group ? 
     {
         email_str: token.email,
-        group_categories_obj: null,
+        group_categories_obj: [],
         description_str: '',
         candidate_individual_categories_obj: {
           game_development_bool: game_development,
@@ -47,7 +47,7 @@ export default function InitializeProfile()
     :
     {
         email_str: token.email,
-        individual_categories_obj: null,
+        individual_categories_obj: [],
         description_str: '',
         candidate_group_categories_obj: {
           game_development_bool: game_development,

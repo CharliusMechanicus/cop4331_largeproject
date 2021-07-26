@@ -25,7 +25,7 @@ function SignUp()
         {
             event.preventDefault();
 
-            var obj = {email_str:email.value, password_str:password.value, dispaly_name_str:displayname.value,
+            var obj = {email_str:email.value, password_str:password.value, display_name_str:displayname.value,
                         phone_str:phonenumber.value,is_group_bool:checked};
             var js = JSON.stringify(obj);
             

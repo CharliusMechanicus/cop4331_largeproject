@@ -10,12 +10,65 @@ const options = [
       backdrop: true,
     },
   ];
-  
+
 function ShowSettings({...props }) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const toggleShow = () => setShow((s) => !s);
+
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    var update_name, update_phonenumber, update_description;
+    var token = JSON.parse(localStorage.getItem('user_data'));
+    const [message, setMessage] = useState('');
+
+    const doLogout = async event => 
+    {
+        window.location.href = '/';
+    }
+
+    const doUpdate = async event => 
+    {
+        var fields = {};
+
+        if (update_name.value != '')
+            fields['display_name_str'] = update_name.value;        
+
+        if (update_phonenumber.value != '')
+            fields['phone_str'] = update_phonenumber.value;
+
+        if (update_description.value != '')
+            fields['description_str'] = update_description.value;
+        
+        var obj = {email_str:token.email,update_fields_obj:fields,access_token_str:token.jwtToken};
+        
+        var js = JSON.stringify(obj);
+
+        try
+        {    
+            const response = await fetch(api_path + 'api/update_profile',
+                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+
+            var res = JSON.parse(await response.text());
+            
+            if (res.success_bool == true)
+            {
+
+                setMessage('Successfully update.');
+                token.jwtToken = res.refreshed_token_str;
+
+                localStorage.setItem('user_data', JSON.stringify(token));
+                window.location.href = '/Home';
+            }
+            else
+            setMessage('Fail to update.');            
+        }
+        catch(e)
+        {
+            alert(e.toString());
+            return;
+        } 
+    }
 
     return (
         <>
@@ -33,24 +86,24 @@ function ShowSettings({...props }) {
                     <Row className="settings-content">
                         <Row className="input-block">
                             <h3>Name</h3>
-                            <input type="text" id="update_name" placeholder='displayname'></input>
+                            <input type="text" id="update_name" placeholder='displayname' ref={(c) => update_name = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Phone Number</h3>
-                            <input type="tel" id="update_phonenumber" placeholder='phonenumber'></input>
+                            <input type="tel" id="update_phonenumber" placeholder='phonenumber' ref={(c) => update_phonenumber = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Description</h3>
-                            <input type="text" id="update_description" placeholder='description'></input>
+                            <input type="text" id="update_description" placeholder='description' ref={(c) => update_description = c}></input>
                         </Row>
                     </Row>
 
                     <Row className="btn-group">
                         <Row>
-                            <button className='logout-btn' id='logout_bnt'>Log Out</button>
+                            <button className='logout-btn' id='logout_bnt' onClick={doLogout}>Log Out</button>
                         </Row>
                         <Row>
-                            <button className='update-btn' id='update_bnt'>Update</button>
+                            <button className='update-btn' id='update_bnt' onClick={doUpdate}>Update</button>
                         </Row>
                     </Row>
                 </Container>
@@ -80,6 +133,29 @@ function ShowMatchList({...props }) {
     const handleClose = () => setShow(false);
     const toggleShow = () => setShow((s) => !s);
 
+    var user_data = localStorage.getItem('user_data');
+    var token = JSON.parse(user_data);
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [match_list, setList] = useState(null);
+    var obj = {email_str:token.email,output_select_str:'e',access_token_str:token.jwtToken};
+    var js = JSON.stringify(obj);
+
+    useEffect(() => 
+    {
+        fetch(api_path + 'api/get_matches',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then(res => {
+            return res.json();
+        })
+        .then(res => {
+            var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
+            var user_data = JSON.stringify(user);
+            localStorage.setItem('user_data', user_data);
+
+            setList(res.matches_array);
+        });
+    },[]);
+
     return (
         <>
         <Button variant="dark" onClick={toggleShow} className="settings-btn">
@@ -92,9 +168,19 @@ function ShowMatchList({...props }) {
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Container className="matchlist-block">
-                    <ListGroup>
+                    {match_list && match_list.map((list) =>
+                        <li key={list.name}>
+                            <div className='match_list'>
+                                <span className='match_list_name'>{list.display_name_str}</span><br/>
+                                <span className='match_list_email'>{list.email_str}</span><br/>
+                                <span className='match_list_phone'>{list.phone_str}</span><br/>
+                            </div>
+                        </li>
+                    )}
+                    
+                    {/* <ListGroup>
                         <span className="matches-block"></span>
-                    </ListGroup>
+                    </ListGroup> */}
                 </Container>
             </Offcanvas.Body>
         </Offcanvas>
@@ -104,22 +190,125 @@ function ShowMatchList({...props }) {
 
 function Home()
 {
-    console.log(JSON.parse(localStorage.getItem('user_data')).jwtToken);
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [target,setTarget] = useState('');
+    const [person,setPerson] = useState(null);
+    const [message, setMessage] = useState('');
 
-    const[peolpe, setPeople] = useState([
-        {
-            name: 'Jack',
-            url: 'https://upload.wikimedia.org/wikipedia/en/c/cd/CreedBratton%28TheOffice%29.jpg'
-        },
-        {
-            name: 'Sunny',
-            url: 'https://smartcdn.prod.postmedia.digital/vancouversun/wp-content/uploads/2019/04/ali-skovbye-headshot-2.jpg'
-        },
-        {
-            name: 'Jack',
-            url: 'https://content.api.news/v3/images/bin/8509e5cc46911c38ec54a81227ccde37'
-        },
-    ]);
+    // get token and form the json request.
+    var token = JSON.parse(localStorage.getItem('user_data'));
+    var obj = {email_str:token.email,is_group_bool:token.is_group,access_token_str:token.jwtToken};
+    var js = JSON.stringify(obj);
+
+    useEffect(()=>{
+        // get the response from the server.
+        fetch(api_path + 'api/get_candidate',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then( res => {
+            return res.json();
+        })
+        .then( res => {
+            var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+            localStorage.setItem('user_data',JSON.stringify(user));
+            setTarget(res.email_str);
+        });
+    },[]);
+
+    useEffect(() => {
+        token = JSON.parse(localStorage.getItem('user_data'));
+        obj = {email_str:target,is_group_bool:token.is_group,access_token_str:token.jwtToken};
+        js = JSON.stringify(obj);
+        var path;
+
+        // get individua profile if you're group.
+        if (token.is_group)
+            path = 'api/get_profile_individual';
+        else
+            path = 'api/get_profile_group';
+
+        fetch((api_path + path) ,{method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then(res =>{
+            return res.json();
+        })
+        .then(res=> {
+            // update the token.
+            var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
+            localStorage.setItem('user_data',  JSON.stringify(user));
+            // return the person object.
+            setPerson({name:res.display_name_str,email:target,phone:res.phone_str,description:res.description_str});
+        });
+    },[target]);
+
+    const swipe_left = () => 
+    {
+        token = JSON.parse(localStorage.getItem('user_data'));
+        obj = {email_str:token.email,is_group_bool:token.is_group,target_email_str:target,access_token_str:token.jwtToken};
+        js = JSON.stringify(obj);
+        fetch(api_path + 'api/swipe_left',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then( res => {
+            return res.json();
+        })
+        .then( res => {
+
+            if (res.success_bool === false)  return;
+            var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+            localStorage.setItem('user_data',JSON.stringify(user));
+            get_candidate();
+        });
+    }
+
+    const swipe_right = () => 
+    {
+        token = JSON.parse(localStorage.getItem('user_data'));
+        obj = {email_str:token.email,is_group_bool:token.is_group,target_email_str:target,access_token_str:token.jwtToken};
+        js = JSON.stringify(obj);
+
+        fetch(api_path + 'api/swipe_right',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then( res => {
+            return res.json();
+        })
+        .then( res => {
+            if (!res.success_bool)  return;
+
+            if (res.match_bool)
+                setMessage("You get a new match!");
+
+            var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+            localStorage.setItem('user_data',JSON.stringify(user));
+            get_candidate();
+        });
+    }
+
+    const get_candidate = () => 
+    {
+        token = JSON.parse(localStorage.getItem('user_data'));
+        obj = {email_str:token.email,is_group_bool:token.is_group,access_token_str:token.jwtToken};
+        js = JSON.stringify(obj);
+    
+        // get the response from the server.
+        fetch(api_path + 'api/get_candidate',
+        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
+        .then( res => {
+            return res.json();
+        })
+        .then( res => {
+
+            var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+            localStorage.setItem('user_data',JSON.stringify(user));
+            setTarget(res.email_str);
+        });
+    }
+
+    const onSwipe = (direction) => {
+        // go left.
+        if (direction != 'right')
+            swipe_left();
+        // go right.
+        else
+            swipe_right();
+    }
 
     return (
         <Container fluid className="content">
@@ -139,23 +328,20 @@ function Home()
                 </Col>
             </Row>
             <Row className="center-piece">
-                <Col sm={8} className="card">
-                    {peolpe.map(person => (
-                        <TinderCard className='swipe' 
-                        key={person.name}
-                        preventSwipe={['up','down']}>
-                            <div className="card">
-                                <h3>{person.name}</h3>
-                            </div>
-                        </TinderCard>
-                    ))}
-                </Col>
+                {person && <div className="card">
+                    <h1>{person.name}</h1>
+                    <h2>{person.phone}</h2>
+                    <h2>{person.email}</h2>
+                    <span>{person.description}</span>
+                </div>}
             </Row>
             <Row className="footer-buttons">
-                <Col sm={8} className="accept-reject">
-                    <img className="reject-icon" src="./close.png"></img>
+                <h1>{message}</h1>
 
-                    <img className="accept-icon" src="./heart.png"></img>
+                <Col sm={8} className="accept-reject">
+                    <img className="reject-icon" src="./close.png" onClick={swipe_left}></img>
+
+                    <img className="accept-icon" src="./heart.png" onClick={swipe_right}></img>
                 </Col>
             </Row>
         </Container>
@@ -163,3 +349,6 @@ function Home()
 }
 
 export default Home;
+
+{/* <button className='swipe_left' onClick={swipe_left} >No</button>
+<button className='swipe_right' onClick={swipe_right}>Yes</button> */}
