@@ -707,7 +707,7 @@ exports.setApp = function(app, client)
 
 	let reset = false;
 
-	for(x = 0; x < candidates_new.length; x++)
+	/*for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0 || get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
 		{
@@ -717,9 +717,9 @@ exports.setApp = function(app, client)
 				set_status(user, candidates_new[x].email, user_is_group_bool, 0);
 			}
 		}
-	}
+	}*/
 
-  reset = false;
+  //reset = false;
 
 	if(reset == false)
 	{
