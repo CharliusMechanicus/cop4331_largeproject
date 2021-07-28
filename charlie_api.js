@@ -20,6 +20,7 @@
 |  send_password_reset                |
 |  reset_password                     |
 |  shove_user_into_database           |
+|  action_select                      |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -1580,6 +1581,139 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END SHOVE_USER_INTO_DATABASE
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // ACTION_SELECT API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, action_select_str)
+  // OUTPUT: JSON OBJECT (success_bool)
+  // FOR DEVELOPMENT PURPOSES ONLY - SHOULD NOT BE USED IN PRODUCTION CODE!
+  
+  /*************************************************
+  |  ACTION_SELECT_STR OPTIONS                     |
+  --------------------------------------------------
+  |  clear_swipes                                  |
+  |  delete_user                                   |
+  **************************************************/
+  
+  app.post('/secret_api/action_select', async (req, res, next) =>
+  {
+  
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let action_select_str;
+
+    // TO RETURN
+    let action_success_bool;
+    let json_response_obj;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    action_select_str = request_body_data.action_select_str;
+
+    /*********************************************************************************************/
+  
+    // IF AN ACTION TO PERFORM WAS NEVER PROVIDED
+    if(action_select_str === undefined)
+    {
+      action_success_bool = false;
+      json_response_obj = {success_bool : action_success_bool};
+      
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THAT AN ACTION TO PERFORM WAS PROVIDED
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+    
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      action_success_bool = false;
+      json_response_obj = {success_bool : action_success_bool};
+      
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME USER EXISTS IN THE DATABASE
+
+    if(action_select_str === "clear_swipes")
+    {
+      try
+      {
+        let user_candidates_array;      
+        user_candidates_array = [ {email : "", status : -1} ];
+      
+        database.collection(collection_str).updateOne( {email : user_email_str},
+        { $set : {candidates : user_candidates_array} } );
+        
+        action_success_bool = true;      
+      }
+      
+      catch(error)
+      {
+        console.log(error);
+        action_success_bool = false;
+      }
+    }
+
+    /********************************************/
+
+    else if(action_select_str === "delete_user")
+    {
+      try
+      {
+        database.collection(collection_str).deleteOne( {email : user_email_str} );
+        action_success_bool = true;
+      }
+      
+      catch(error)
+      {
+        console.log(error);
+        action_success_bool = false;
+      }
+    }
+
+    /********************************************/
+
+    // OTHERWISE, AN INVALID ACTION WAS SPECIFIED
+    else
+    {
+      action_success_bool = false;
+    }
+
+    /*********************************************************************************************/
+
+    json_response_obj = {success_bool : action_success_bool};
+    res.status(200).json(json_response_obj);
+
+  }); // END ACTION_SELECT API ENDPOINT
 
   /*********************************** END API ENDPOINTS *****************************************/
 
