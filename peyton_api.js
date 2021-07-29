@@ -27,8 +27,8 @@ exports.setApp = function(app, client)
             {
               success_bool : success_bool,
               display_name_str : display_name_str,
-			  description_str : description_str,
-			  phone_str : phone_str,
+			        description_str : description_str,
+			        phone_str : phone_str,
               refreshed_token_str : refreshed_token_str
             };
 
@@ -607,7 +607,7 @@ exports.setApp = function(app, client)
       res.status(200).json(json_response_obj);
       return;
     }
-	
+
   	try
 	{
   		database_results_array =
@@ -620,7 +620,7 @@ exports.setApp = function(app, client)
 		return;
     }
   	user = database_results_array[0];
-	
+
 	try
 	{
   		candidate_results_array =
@@ -634,7 +634,7 @@ exports.setApp = function(app, client)
     }
   	candidates = candidate_results_array;
 	candidates_new = [];
-	
+
 	for(let x  = 0; x < candidates.length; x++)
 	{
 		if(user_is_group_bool == true)
@@ -678,7 +678,7 @@ exports.setApp = function(app, client)
 			}
 		}
 	}
-	
+
 	for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
@@ -691,7 +691,7 @@ exports.setApp = function(app, client)
 			}
 		}
 	}
-	
+
 	for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0)
@@ -704,10 +704,10 @@ exports.setApp = function(app, client)
 			}
 		}
 	}
-	
+
 	let reset = false;
-	
-	for(x = 0; x < candidates_new.length; x++)
+
+	/*for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0 || get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
 		{
@@ -717,15 +717,17 @@ exports.setApp = function(app, client)
 				set_status(user, candidates_new[x].email, user_is_group_bool, 0);
 			}
 		}
-	}
-	
+	}*/
+
+  //reset = false;
+
 	if(reset == false)
 	{
 		json_response_obj = error_yes_token();
         res.status(200).json(json_response_obj);
 		return;
 	}
-	
+
 	for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 2)
@@ -738,7 +740,7 @@ exports.setApp = function(app, client)
 			}
 		}
 	}
-	
+
 	for(x = 0; x < candidates_new.length; x++)
 	{
 		if(get_status(candidates_new[x], user_email_str, user_is_group_bool == false) == 0)
@@ -751,10 +753,10 @@ exports.setApp = function(app, client)
 			}
 		}
 	}
-	
-	
-  	
-	
+
+
+
+
 	json_response_obj = error_yes_token();
   	res.status(200).json(json_response_obj);
 	return;
@@ -784,7 +786,7 @@ exports.setApp = function(app, client)
 		}
 		return 0;
 	}
-	
+
   // RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
   // 'user_email_str' IS THE USER (PRIMARY SUBJECT) OF AN API ENDPOINT
   // 'disable_str' WILL DISABLE THE SECURITY FIX THAT RESOLVED THE ISSUE IN ALLOWING 'VALID'..
@@ -813,20 +815,20 @@ exports.setApp = function(app, client)
       {
         return false;
       }
-      
+
       else
       {
         return true;
       }
     }
-    
+
     catch(error)
     {
       console.log(error.message);
       return false;
     }
   }
-  
+
     // --
     function create_refreshed_token(access_token_str)
     {
