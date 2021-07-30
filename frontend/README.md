@@ -8,8 +8,6 @@ To get started with your local environment run the following commands in this fo
 
 `sudo npm install`
 
-`npm install nodemailer`
-
 `npm install react-router-dom`
 
 `npm install --save react-tinder-card`
