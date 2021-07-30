@@ -1,6 +1,11 @@
 # Kindling
 Objective: Develop an app utilizing the MERN stack
 
+## Install the following dependencies in this folder on your local environment
+`npm install nodemailer`
+
+`npm install express-fileupload`
+
 ### COP 4331
 
 ## Team Members and Roles
