@@ -12,6 +12,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const file_upload = require('express-fileupload');
 const charlie_api = require('./charlie_api.js');
 const peyton_api = require('./peyton_api.js');
 
@@ -22,6 +23,7 @@ const peyton_api = require('./peyton_api.js');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(file_upload());
 app.set('port', (process.env.PORT || 5000));
 
 /************************************************************************************************************************/

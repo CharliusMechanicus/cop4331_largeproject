@@ -21,6 +21,7 @@
 |  reset_password                     |
 |  shove_user_into_database           |
 |  action_select                      |
+|  upload_profile_picture             |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -1671,7 +1672,7 @@ exports.setApp = function(app, client)
         user_candidates_array = [ {email : "", status : -1} ];
       
         database.collection(collection_str).updateOne( {email : user_email_str},
-        { $set : {candidates : user_candidates_array} } );
+          { $set : {candidates : user_candidates_array} } );
         
         action_success_bool = true;      
       }
@@ -1690,6 +1691,8 @@ exports.setApp = function(app, client)
       try
       {
         database.collection(collection_str).deleteOne( {email : user_email_str} );
+        database.collection("codes").deleteOne( {email : user_email_str} );
+        database.collection("profile_pictures").deleteOne( {email : user_email_str} );
         action_success_bool = true;
       }
       
@@ -1714,6 +1717,245 @@ exports.setApp = function(app, client)
     res.status(200).json(json_response_obj);
 
   }); // END ACTION_SELECT API ENDPOINT
+
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // UPLOAD_PROFILE_PICTURE API ENDPOINT
+  // MULTIPART FORM DATA INPUT: IMAGE FILE - 'profile_picture' FROM FRONTEND INPUT TAG,
+  //                            TEXT - 'email_str' CORRESPONDING TO 'profile_picture'
+  //                            TEXT - 'access_token_str'
+  // OUTPUT: JSON OBJECT (success_bool, error_code_int, refreshed_token_str)
+  
+  /**************************************
+  | ERROR CODE INT                      |
+  ---------------------------------------
+  |-1 : bad token                       |
+  | 0 : no error                        |
+  | 1 : upload size too large           |
+  | 2 : user not found in database      |
+  | 3 : database write error            |
+  | 4 : database has too many pictures  |
+  | 5 : no image was uploaded           |
+  ***************************************/
+  app.post('/api/upload_profile_picture', async (req, res, next) =>
+  {
+
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    const mongodb_binary = require('mongodb').Binary;
+    const MAX_UPLOAD_SIZE = 3200000; // BYTES
+    const MAX_DATABASE_SIZE = 512000000; // BYTES
+    
+    let request_body_data;
+    let user_email_str;
+    let user_access_token_str;
+    let image_binary;
+    let file_name_str;
+
+    let image_size_bytes;
+    let collection_stats_obj;
+    let collection_size_bytes;
+
+    let database;
+    let database_results_array;
+    let collection_str;
+    
+    // TO RETURN
+    let upload_success_bool;
+    let error_code_int;
+    let refreshed_token_str;
+    let json_response_obj;
+
+    /********************
+    |  LOCAL FUNCTIONS  |
+    *********************/
+    
+    const json_response_obj_factory =
+      function (upload_success_bool, error_code_int, refreshed_token_str)
+      {
+        let json_response_obj =
+          {
+            success_bool : upload_success_bool,
+            error_code_int : error_code_int,
+            refreshed_token_str : refreshed_token_str
+          };
+          
+        return json_response_obj;
+      };
+
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    user_access_token_str = request_body_data.access_token_str;
+    
+    // IF AN IMAGE WAS ACTUALLY UPLOADED
+    if(req.files !== null)
+    {
+      image_binary = mongodb_binary(req.files.profile_picture.data);
+      file_name_str = req.files.profile_picture.name;
+    }
+    
+    // OTHERWISE, AN IMAGE WAS NOT UPLOADED
+    else
+    {
+      upload_success_bool = false;
+      error_code_int = 5;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+        
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THAT AN IMAGE WAS UPLOADED
+
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str, user_email_str))
+    {
+      upload_success_bool = false;
+      error_code_int = -1;
+      refreshed_token_str = "";
+      
+      json_response_obj =
+        json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    image_size_bytes = req.files.profile_picture.size;
+
+    // IF UPLOADED IMAGE IS MORE THAN PERMITTED SIZE FOR PROFILE PICTURE, OR NO IMAGE WAS UPLOADED
+    if(image_size_bytes > MAX_UPLOAD_SIZE || image_size_bytes === 0)
+    {
+      upload_success_bool = false;
+      
+      if(image_size_bytes > 0)
+        error_code_int = 1; // TOO BIG
+      else
+        error_code_int = 5; // NON-EXISTENT
+
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj =
+        json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME WE HAVE AN UPLOAD SIZE WITHIN DESIGNATED LIMITS
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }  
+
+    collection_str = await user_exists_in_this_collection(user_email_str, database);
+    
+    /*********************************************************************************************/
+
+    // IF USER COULD NOT BE FOUND IN DATABASE
+    if(!collection_str)
+    {
+      upload_success_bool = false;
+      error_code_int = 2;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj =
+        json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+      
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME USER EXISTS IN THE DATABASE
+
+    collection_stats_obj =  await database.collection("profile_pictures").stats();
+    collection_size_bytes = collection_stats_obj.size;
+
+    // IF EXISTING PROFILE PICTURES ARE ALREADY TAKING UP MORE THAN 80% OF THE DATABASE
+    if( (collection_size_bytes / MAX_DATABASE_SIZE) > 0.8)
+    {
+      upload_success_bool = false;
+      error_code_int = 4;
+      refreshed_token_str = create_refreshed_token(user_access_token_str);
+      
+      json_response_obj =
+        json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+      
+      res.status(200).json(json_response_obj);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME WE STILL HAVE ENOUGH SPACE FOR ADDITIONAL PROFILE PICTURES
+
+    database_results_array =
+      await database.collection("profile_pictures").find( {email : user_email_str} ).toArray();
+
+    // IF THERE IS CURRENTLY NO PROFILE PICTURE FOR THE USER
+    if(database_results_array.length === 0)
+    {
+      let document_to_insert =
+        { profile_picture : image_binary, file_name : file_name_str, email : user_email_str };
+      
+      try
+      {
+        database.collection("profile_pictures").insertOne(document_to_insert);
+        upload_success_bool = true;
+        error_code_int = 0;
+      }
+      
+      catch(error)
+      {
+        upload_success_bool = false;
+        error_code_int = 3;
+      }
+    }
+    
+    // OTHERWISE, THERE IS AN EXISTING PROFILE PICTURE FOR THE USER
+    else
+    {
+      try
+      {
+        database.collection("profile_pictures").updateOne( {email : user_email_str},
+          { $set : {profile_picture : image_binary, file_name : file_name_str} } );
+        upload_success_bool = true;
+        error_code_int = 0;
+      }
+      
+      catch(error)
+      {
+        upload_success_bool = false;
+        error_code_int = 3;
+      }
+    }
+
+    /*********************************************************************************************/
+
+    refreshed_token_str = create_refreshed_token(user_access_token_str);
+    json_response_obj =
+      json_response_obj_factory(upload_success_bool, error_code_int, refreshed_token_str);
+    res.status(200).json(json_response_obj);
+
+  }); // END UPLOAD_PROFILE_PICTURE API ENDPOINT
 
   /*********************************** END API ENDPOINTS *****************************************/
 
@@ -1917,6 +2159,13 @@ exports.setApp = function(app, client)
     {
       let jwt = require("jsonwebtoken");
       let user_data = jwt.decode(access_token_str, {complete:true});
+
+      // IF TOKEN HAS BEEN TAMPERED WITH
+      if(user_data === null)
+      {
+        return false;
+      }
+      
       let email_str_from_token = user_data.payload.email_str;
 
       if(email_str_from_token !== user_email_str)
