@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Switch from 'react-switch';
+import {Link} from "react-router-dom";
+
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 
 function SignUpModal() {
@@ -70,7 +72,7 @@ function SignUpModal() {
       ))}
       <Modal show={show} fullscreen={fullscreen} onHide={() => setShow(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create a New Account<span id="pw-warning">{message}</span></Modal.Title>
+          <Modal.Title className="title-extra">Create a New Account<span id="pw-warning">{message}</span></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
@@ -126,6 +128,102 @@ function SignUpModal() {
   );
 }
 
+function LoginModal()
+{
+  const [fullscreen, setFullscreen] = useState(true);
+  const [show, setShow] = useState(false);
+  const modalBreak = ['md-down'];
+
+  function handleShow(breakpoint) {
+    setFullscreen(breakpoint);
+    setShow(true);
+  }
+
+  var loginName;
+    var loginPassword;
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [message,setMessage] = useState('');
+
+
+    const doLogin = async event =>
+    {
+        event.preventDefault();
+
+        var obj = {email_str:loginName.value,password_str:loginPassword.value};
+        var js = JSON.stringify(obj);
+        
+        try
+        {    
+            const response = await fetch(api_path + 'api/login', {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+
+            var res = JSON.parse(await response.text());
+
+            var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
+            var user_data = JSON.stringify(user);
+            
+            // ready state is 0, send user to email verification page.
+            if( res.ready_status_int == 0)
+            {
+              window.location.href = '/emailverification';
+            }
+            // ready state is 1, send user to complete his personal file.
+            else if( res.ready_status_int == 1)
+            {
+              localStorage.setItem('user_data', user_data);
+              
+              window.location.href = '/InitializeProfile';
+            }
+            // successfully logged in
+            else if ( res.ready_status_int == 2)
+            {localStorage.setItem('user_data', user_data);
+              window.location.href = '/Home';
+            }
+            // Failed to login
+            else
+            {
+              setMessage('*Incorrect combination');
+            }
+        }
+        catch(e)
+        {
+          alert(e.toString());
+          return;
+        } 
+    };
+
+    return (
+      <>
+      {modalBreak.map((v, idx) => (
+        <button key={idx} className="login-modal-btn" onClick={() => handleShow(v)}>
+          Login
+        </button>
+      ))}
+
+      <Modal show={show} fullscreen={fullscreen} onHide={() => setShow(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="title-extra">Login<span id="pw-warning">{message}</span></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Row className="input-blanket">
+              <Col className="signup-input-group">
+                <input type="email" className="signup-input" name="username" placeholder='E-mail' ref={(c) => loginName = c}></input>
+
+                <input type="password" className="signup-input" name="password" placeholder='Password' ref={(c) => loginPassword = c}></input>
+              </Col>
+              <Col className="login-modal-footer">
+                <button id='login_page_bnt' onClick={doLogin}>Login</button>
+
+                <Link to={'/resetPassword'} className="forgot-link">forgot password?</Link>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
+
 function MainPage()
 {
   function toLogIn()
@@ -154,7 +252,7 @@ function MainPage()
         <Col sm={6} className="main-btn">
           <SignUpModal/>
 
-          <button className='btn' id='login_btn' onClick={toLogIn}>Log In</button>
+          <LoginModal/>
         </Col>
       </Row>
     </Container>

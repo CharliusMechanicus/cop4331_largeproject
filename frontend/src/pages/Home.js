@@ -107,20 +107,6 @@ function ShowSettings({...props }) {
                         </Row>
                     </Row>
                 </Container>
-
-                {/* Backup */}
-                {/* <div className="settings-block">
-                    <h3>Name</h3>
-                    <input type="text" id="update_name" placeholder='displayname'></input>
-                    <h3>Phone Number</h3>
-                    <input type="tel" id="update_phonenumber" placeholder='phonenumber'></input>
-                    <h3>Description</h3>
-                    <input type="text" id="update_description" placeholder='description'></input>
-                    <div className="btn-group">
-                        <button className='logout-btn' id='logout_bnt'>Log Out</button>
-                        <button className='update-btn' id='update_bnt'>Update</button>
-                    </div>
-                </div> */}
             </Offcanvas.Body>
         </Offcanvas>
         </>
@@ -349,6 +335,3 @@ function Home()
 }
 
 export default Home;
-
-{/* <button className='swipe_left' onClick={swipe_left} >No</button>
-<button className='swipe_right' onClick={swipe_right}>Yes</button> */}

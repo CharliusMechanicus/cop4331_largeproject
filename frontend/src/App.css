@@ -122,15 +122,15 @@
 }
 
 #signup_btn_2 {
-  position: relative;
-  display: inline-block;
-  padding: 10px 50px;
-  font-size: 16px;
-  text-align: center;
-  text-decoration: none;
-  color: #fff;
-  border-radius: 15px;
-  overflow: visible;
+ position: relative;
+ display: inline-block;
+ padding: 10px 50px;
+ font-size: 16px;
+ text-align: center;
+ text-decoration: none;
+ color: #fff;
+ border-radius: 15px;
+ overflow: visible;
 }
 
 #login_btn {
@@ -144,8 +144,8 @@
 }
 
 #signup_btn_2 {
-  background-color: #ffa347;
-  border-color: #BF4342;
+ background-color: #ffa347;
+ border-color: #bf4342;
 }
 
 body {
@@ -196,16 +196,15 @@ body {
 }
 
 #login_page_bnt {
- border: 0;
  background: #bf4342;
  display: block;
  margin: 20px auto;
  text-align: center;
- border: 2px solid #d9d9d9;
+ /* border: 2px solid #d9d9d9; */
  padding: 10px;
- width: 200px;
+ width: 150px;
  outline: none;
- /* color: white; */
+ color: white;
  border-radius: 24px;
  transition: 0.24s;
 }
@@ -475,136 +474,163 @@ body {
 }
 
 .main-header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  margin-top: 10px;
+ display: flex;
+ flex-direction: row;
+ flex-wrap: nowrap;
+ justify-content: flex-start;
+ align-items: center;
+ margin-top: 10px;
 }
 
 .main-fire-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+ display: flex;
+ justify-content: center;
+ align-items: center;
 }
 
 .main-header-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+ display: flex;
+ justify-content: center;
+ align-items: center;
 }
 
 .main-center {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
 }
 
 .middle-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2%;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ margin-top: 2%;
 }
 
 .main-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  margin-top: 5%;
-
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-content: center;
+ margin-top: 5%;
 }
 
 .main-btn {
-  display: flex;
-  flex-direction: center;
-  justify-content: space-between;
-  align-content: center;
+ display: flex;
+ flex-direction: center;
+ justify-content: space-between;
+ align-content: center;
 }
 
 .signup-input-group {
-  display: flex;
-  flex-direction: column;
+ display: flex;
+ flex-direction: column;
 }
 
 .signup-input {
-  margin-bottom: 3%;
-  border-style: solid;
-  border-color: #808080;
-  border-radius: 6px;
-  border-width: 1px;
+ margin-bottom: 3%;
+ border-style: solid;
+ border-color: #808080;
+ border-radius: 6px;
+ border-width: 1px;
 }
 
 .modal-content {
-  border-radius: 30px;
+ border-radius: 30px;
 }
 
 #desire {
-  color: #BF4342;
-  text-align: center;
+ color: #bf4342;
+ text-align: center;
 }
 
 .switch-group {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
 }
 
 .input-blanket {
-  display: flex;
-  flex-direction: column;
-
+ display: flex;
+ flex-direction: column;
 }
 
 .signup-modal-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 4%;
+ display: flex;
+ justify-content: center;
+ margin-top: 4%;
 }
 
 #i-select {
-  color: #ffa347;
-  margin-right: 3%;
+ color: #ffa347;
+ margin-right: 3%;
 }
 
 #p-select {
-  color: #bf4342;
-  margin-left: 3%;
+ color: #bf4342;
+ margin-left: 3%;
 }
 
 .selection-body {
-  display: felx;
-  flex-direction: column;
-
+ display: felx;
+ flex-direction: column;
 }
 
 .selection-component {
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  margin-top: 2%;
+ display: flex;
+ align-content: center;
+ justify-content: center;
+ margin-top: 2%;
 }
 
 .signup-modal-btn {
-  position: relative;
-  background-color: #FFA347;
-  border-color: #BF4342;
-  display: inline-block;
-  padding: 20px 100px;
-  font-size: 24px;
-  text-align: center;
-  text-decoration: none;
-  color: #FFFFFF;
-  border-radius: 15px;
-  overflow: visible;
+ position: relative;
+ background-color: #ffa347;
+ border-color: #bf4342;
+ display: inline-block;
+ padding: 20px 100px;
+ font-size: 24px;
+ text-align: center;
+ text-decoration: none;
+ color: #ffffff;
+ border-radius: 15px;
+ overflow: visible;
 }
 
 #pw-warning {
-  margin-left: 1%;
-  color: #FF0000;
+ color: #ff0000;
+ font-size: 16px;
+}
+
+.title-extra {
+ display: flex;
+}
+
+.login-modal-btn {
+ position: relative;
+ background-color: #f0473a;
+ border-color: #ffa347;
+ display: inline-block;
+ padding: 20px 100px;
+ font-size: 24px;
+ text-align: center;
+ text-decoration: none;
+ color: #ffffff;
+ border-radius: 15px;
+ overflow: visible;
+}
+
+.login-modal-footer {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+}
+
+.forgot-link {
+ color: #3643ff;
+ text-decoration: none;
 }
