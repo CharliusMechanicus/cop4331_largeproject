@@ -71,9 +71,8 @@
 
 .top_title {
  position: relative;
- margin-left: 50px;
  color: white;
- size: 40px;
+ font-size: 40px;
 }
 
 .fire_hand {
@@ -490,7 +489,6 @@ body {
 
 .main-header-title {
  display: flex;
- justify-content: center;
  align-items: center;
 }
 
