@@ -1751,6 +1751,7 @@ exports.setApp = function(app, client)
     let user_email_str;
     let user_access_token_str;
     let image_binary;
+    let file_name_str;
 
     let image_size_bytes;
     let collection_stats_obj;
@@ -1789,10 +1790,14 @@ exports.setApp = function(app, client)
     request_body_data = req.body;
     user_email_str = request_body_data.email_str;
     user_access_token_str = request_body_data.access_token_str;
+    
     // IF AN IMAGE WAS ACTUALLY UPLOADED
     if(req.files !== null)
+    {
       image_binary = mongodb_binary(req.files.profile_picture.data);
-
+      file_name_str = req.files.profile_picture.name;
+    }
+    
     // OTHERWISE, AN IMAGE WAS NOT UPLOADED
     else
     {
@@ -1908,7 +1913,8 @@ exports.setApp = function(app, client)
     // IF THERE IS CURRENTLY NO PROFILE PICTURE FOR THE USER
     if(database_results_array.length === 0)
     {
-      let document_to_insert = { profile_picture : image_binary, email : user_email_str };
+      let document_to_insert =
+        { profile_picture : image_binary, file_name: file_name_str, email : user_email_str };
       
       try
       {
@@ -2153,13 +2159,6 @@ exports.setApp = function(app, client)
     {
       let jwt = require("jsonwebtoken");
       let user_data = jwt.decode(access_token_str, {complete:true});
-
-      // IF TOKEN HAS BEEN TAMPERED WITH
-      if(user_data === null)
-      {
-        return false;
-      }
-      
       let email_str_from_token = user_data.payload.email_str;
 
       if(email_str_from_token !== user_email_str)
