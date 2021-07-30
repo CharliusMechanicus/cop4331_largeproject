@@ -787,7 +787,7 @@ exports.setApp = function(app, client)
 		return 0;
 	}
 
-  // RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
+	// RETURNS 'true' IF 'access_token_str' IS VALID, 'false' OTHERWISE
   // 'user_email_str' IS THE USER (PRIMARY SUBJECT) OF AN API ENDPOINT
   // 'disable_str' WILL DISABLE THE SECURITY FIX THAT RESOLVED THE ISSUE IN ALLOWING 'VALID'..
   // ..TOKENS TO BE USED FOR ANOTHER USER - TO DISABLE, ENTER A VALUE OF 'd' OR 'D'
@@ -798,6 +798,13 @@ exports.setApp = function(app, client)
     {
       let jwt = require("jsonwebtoken");
       let user_data = jwt.decode(access_token_str, {complete:true});
+
+      // IF TOKEN HAS BEEN TAMPERED WITH
+      if(user_data === null)
+      {
+        return false;
+      }
+      
       let email_str_from_token = user_data.payload.email_str;
 
       if(email_str_from_token !== user_email_str)
@@ -815,13 +822,13 @@ exports.setApp = function(app, client)
       {
         return false;
       }
-
+      
       else
       {
         return true;
       }
     }
-
+    
     catch(error)
     {
       console.log(error.message);
