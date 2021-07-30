@@ -2153,6 +2153,13 @@ exports.setApp = function(app, client)
     {
       let jwt = require("jsonwebtoken");
       let user_data = jwt.decode(access_token_str, {complete:true});
+
+      // IF TOKEN HAS BEEN TAMPERED WITH
+      if(user_data === null)
+      {
+        return false;
+      }
+      
       let email_str_from_token = user_data.payload.email_str;
 
       if(email_str_from_token !== user_email_str)
