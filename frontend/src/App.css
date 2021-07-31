@@ -682,35 +682,6 @@ body {
  margin-bottom: 15px;
 }
 
-/* #imposter {
- background-color: #bf4342;
- border-style: none;
- border-radius: 15px;
- padding: 5px 15px;
- text-align: center;
- color: #ffffff;
- width: 100%;
- max-width: 170px;
-}
-
-#imposter:hover {
- background-color: #ffa347;
- border-style: solid;
- border-width: 2px;
- border-color: #ffffff;
-}
-
-#imposter label span {
- text-align: center;
- padding: 5px 15px;
- display: block;
-}
-
-#imposter label input {
-    position: absolute;
-
-} */
-
 .imposter {
  width: 170px;
 }
