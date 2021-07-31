@@ -188,32 +188,87 @@ export default function InitializeProfile()
                                             </label>
                                         </div>
                                     
-                                        <input type='button' className='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-02" onClick={() => set_app_development(!app_development)}/>
+                                            <label className="ninja-label" for="option-02">
+                                                <span className="ninja-text">app development</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                     <Col className="duo-group">
-                                        <input type='button' className='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-03" onClick={() => set_web_development(!web_development)}/>
+                                            <label className="ninja-label" for="option-03">
+                                                <span className="ninja-text">web development</span>
+                                            </label>
+                                        </div>
                                     
-                                        <input type='button' className='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-04" onClick={() => set_robotics(!robotics)}  value='robotics'/>
+                                            <label className="ninja-label" for="option-04">
+                                                <span className="ninja-text">robotics</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                     <Col className="duo-group">
-                                        <input type='button' className='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-05" onClick={() => set_graphic_design(!graphic_design)}/>
+                                            <label className="ninja-label" for="option-05">
+                                                <span className="ninja-text">graphic design</span>
+                                            </label>
+                                        </div>
                     
-                                        <input type='button' className='select_btn' onClick={() => set_writer(!writer)}  value='writer'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-06" onClick={() => set_writer(!writer)}/>
+                                            <label className="ninja-label" for="option-06">
+                                                <span className="ninja-text">writer</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                     <Col className="duo-group">
-                                        <input type='button' className='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-07" onClick={() => set_marketing(!marketing)}/>
+                                            <label className="ninja-label" for="option-07">
+                                                <span className="ninja-text">marketing</span>
+                                            </label>
+                                        </div>
                             
-                                        <input type='button' className='select_btn' onClick={() => set_networking(!networking)}  value='networking'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-08" onClick={() => set_networking(!networking)}/>
+                                            <label className="ninja-label" for="option-08">
+                                                <span className="ninja-text">networking</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                     <Col className="duo-group">
-                                        <input type='button' className='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-09" onClick={() => set_construction(!construction)}/>
+                                            <label className="ninja-label" for="option-09">
+                                                <span className="ninja-text">construction</span>
+                                            </label>
+                                        </div>
 
-                                        <input type='button' className='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-10" onClick={() => set_lab_partners(!lab_partners)}/>
+                                            <label className="ninja-label" for="option-10">
+                                                <span className="ninja-text">lab partners</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                     <Col className="duo-group">
-                                        <input type='button' className='select_btn' onClick={() => set_research(!research)}  value='research'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-11" onClick={() => set_research(!research)}/>
+                                            <label className="ninja-label" for="option-11">
+                                                <span className="ninja-text">research</span>
+                                            </label>
+                                        </div>
                                         
-                                        <input type='button' className='select_btn' onClick={() => set_other(!other)}  value='other'/>
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-12" onClick={() => set_other(!other)}/>
+                                            <label className="ninja-label" for="option-12">
+                                                <span className="ninja-text">other</span>
+                                            </label>
+                                        </div>
                                     </Col>
                                 </Row>
                             </Col>

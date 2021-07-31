@@ -711,6 +711,10 @@ body {
 
 } */
 
+.imposter {
+ width: 170px;
+}
+
 .ninja-input {
  display: none;
 }
