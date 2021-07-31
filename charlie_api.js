@@ -22,6 +22,7 @@
 |  shove_user_into_database           |
 |  action_select                      |
 |  upload_profile_picture             |
+|  get_profile_picture                |
 ***************************************/
 
 exports.setApp = function(app, client)
@@ -1957,6 +1958,77 @@ exports.setApp = function(app, client)
 
   }); // END UPLOAD_PROFILE_PICTURE API ENDPOINT
 
+  /********************************** NEXT API ENDPOINT ******************************************/
+
+  // GET_PROFILE_PICTURE API ENDPOINT
+  // INPUT: JSON OBJECT (email_str, access_token_str)
+  // OUTPUT: IMAGE FILE (profile_picture)
+  app.post('/api/get_profile_picture', async (req, res, next) =>
+  {
+    /********************
+    |  LOCAL VARIABLES  |
+    *********************/
+    let request_body_data;
+    let user_email_str;
+    let user_access_token_str;
+
+    let profile_picture_name_str;
+
+    let database;
+    let database_results_array;
+    
+    /*********************************************************************************************/
+
+    // EXTRACT INFORMATION
+    request_body_data = req.body;
+    user_email_str = request_body_data.email_str;
+    user_access_token_str = request_body_data.access_token_str;
+
+    /*********************************************************************************************/
+    
+    // IF TOKEN IS NOT VALID
+    if(!is_token_valid(user_access_token_str, user_email_str))
+    {
+      send_default_profile_picture(res);
+      return;
+    }
+
+    /*********************************************************************************************/
+    // AT THIS POINT, WE CAN ASSUME THE ACCESS TOKEN IS VALID
+
+    // CONNECT TO DATABASE
+    try
+    {
+      database = client.db();
+    }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+
+    /*********************************************************************************************/
+
+    database_results_array =
+      await database.collection("profile_pictures").find( {email : user_email_str} ).toArray();
+
+    // IF THE USER DOES NOT HAVE A PROFILE PICTURE UPLOADED FOR THEMSELVES
+    if(database_results_array.length === 0)
+    {
+      send_default_profile_picture(res);
+      return;
+    }
+
+    // OTHERWISE, THE USER DOES HAVE AN UPLOADED PROFILE PICTURE
+    else
+    {
+      profile_picture_name_str = database_results_array[0].file_name;
+    
+      send_profile_picture_from_buffer(
+        database_results_array[0].profile_picture.buffer, profile_picture_name_str, res);
+    }
+
+  }); // END GET_PROFILE_PICTURE API ENDPOINT
+
   /*********************************** END API ENDPOINTS *****************************************/
 
   /***************************************************
@@ -1984,6 +2056,8 @@ exports.setApp = function(app, client)
   |  does_this_code_exist                            |
   |  save_verification_code                          |
   |  save_password_reset_code                        |
+  |  send_default_profile_picture                    |
+  |  send_profile_picture_from_buffer                |
   ****************************************************/
 
   function individual_obj_factory(email_str, pwd_str, display_name_str, phone_str,
@@ -2568,6 +2642,64 @@ exports.setApp = function(app, client)
       database.collection(COLLECTION_NAME_FOR_STORED_CODES).updateOne( {email : user_email_str},
         { $set : {reset_code : pwd_reset_code_str} } );
     }
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  function send_default_profile_picture(res)
+  {
+    // SEND DEFAULT PROFILE PICTURE LOCATED IN ABSOLUTE PATH -
+    // CURRENT WORKING DIRECTORY + 'default.png'
+    res.sendFile(__dirname + "/default.png");
+  }
+
+  /************************************* NEXT FUNCTION *******************************************/
+
+  // 'image_name_str' IS ASSUMED TO BE COMPLETE FILE NAME WITH EXTENSION
+  function send_profile_picture_from_buffer(image_buffer, image_name_str, res)
+  {
+    let nodejs_file_system = require("fs");
+
+    /**********************************************/
+
+    let sendfile_callback = function (err)
+      {
+        if(err)
+        {
+          send_default_profile_picture(res);
+          nodejs_file_system.rm(__dirname + "/" + image_name_str, {}, function (err)
+            {
+              if(err)
+                console.log(err);
+            });
+        }
+        
+        else
+        {
+          nodejs_file_system.rm(__dirname + "/" + image_name_str, {}, function (err)
+            {
+              if(err)
+                console.log(err);
+            });
+        }
+      };
+
+    /**********************************************/
+
+    let writefile_callback = function (err)
+      {
+        if(err)
+          send_default_profile_picture(res);
+          
+        else
+          res.sendFile(__dirname + "/" + image_name_str, {}, sendfile_callback);
+      };
+
+    /**********************************************/
+
+    // MAKE IMAGE FROM IMAGE BUFFER AND SAVE TO CURRENT WORKING LOCATION
+    nodejs_file_system.writeFile(image_name_str, image_buffer, writefile_callback);
+    
   }
 
 }; // END setApp
