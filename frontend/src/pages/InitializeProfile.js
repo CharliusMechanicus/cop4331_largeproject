@@ -66,6 +66,11 @@ export default function InitializeProfile()
         },
         access_token_str: token.jwtToken,
       };
+
+    const doLogout = async event => 
+    {
+        window.location.href = '/';
+    }
     
     const save_tages = async event =>
     {
@@ -84,7 +89,7 @@ export default function InitializeProfile()
             }
 
         if (num_select < 1)
-            setMessage('Please select at least one fileds.');
+            setMessage('Please select at least one field.');
         else
             setShowDescription(true);
     }
@@ -157,17 +162,14 @@ export default function InitializeProfile()
                             <Col>
                                 <Row>
                                     <Col>
-                                        <h1>Descriptions</h1>
+                                        <h5 className="option-header">What would you like everyone to know?</h5>
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col>
-                                        <input type="text" className="description" placeholder='description' ref={(c) => description = c}></input>
+                                    <Col className="text-blanket">
+                                        <textarea className="description" rows="5" cols="40" placeholder="Type something to get people interested!" ref={(c) => description = c}>
+                                        </textarea>
                                     </Col>
-                                </Row>
-                                <Row>
-                                    <button className='btn' onClick={save_profile}>Save</button>
-                                    <span>{message}</span>
                                 </Row>
                             </Col>
                         </Row>
@@ -277,9 +279,13 @@ export default function InitializeProfile()
                 </Modal.Body>
 
                 <Modal.Footer className="initial-footer">
-                    <Button variant="secondary" size="sm" className="return-btn">Logout</Button>
+                    <button className='logout-btn-footer' onClick={doLogout}>Logout</button>
 
-                    <Button variant="success" onClick={save_tages} size="sm" className="continue-btn">Save changes</Button>
+                    {showDescription ?
+                        <button className="continue-btn" onClick={save_profile}>Continue</button>
+                        :
+                        <button className="continue-btn" onClick={save_tages}>Continue</button>
+                    }
                 </Modal.Footer>
             </Modal>
         </Container>

@@ -715,3 +715,43 @@ body {
  border-color: #000000;
  border-width: 0px;
 }
+
+.logout-btn-footer,
+.continue-btn {
+ border-style: none;
+ font-size: 20px;
+ border-radius: 15px;
+ color: #ffffff;
+ text-align: center;
+ transform: translateY(4px);
+}
+.logout-btn-footer {
+ background-color: #bf4342;
+ width: 100%;
+ padding: 10px 15px;
+ max-width: 100px;
+}
+
+.logout-btn-footer:hover {
+ background-color: #bb2519;
+}
+
+.continue-btn {
+ background-color: #e96c6b;
+ padding: 10px 15px;
+ width: 100%;
+ max-width: 200px;
+}
+
+.continue-btn:hover {
+ background-color: #ffa347;
+}
+
+.text-blanket {
+ display: flex;
+ justify-content: center;
+}
+
+.description {
+ resize: both;
+}
