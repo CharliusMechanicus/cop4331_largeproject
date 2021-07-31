@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import storage from '../tokenStorage.js';
+import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 
 export default function InitializeProfile()
 {
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const[message, setMessage] = useState('');
     
-    const[showDescription, showDescription] = useState(false);
+    const[showDescription, setShowDescription] = useState(false);
     const[game_development, set_game_development] = useState(false);
     const[app_development, set_app_development] = useState(false);
     const[web_development, set_web_development] = useState(false);
@@ -85,7 +86,7 @@ export default function InitializeProfile()
         if (num_select < 1)
             setMessage('Please select at least one fileds.');
         else
-            setShowDescribetion(true);
+            setShowDescription(true);
     }
 
     const save_profile = async event =>
@@ -122,7 +123,7 @@ export default function InitializeProfile()
                     var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
                     localStorage.setItem('user_data', JSON.stringify(user));
                     
-                    window.location.href = '/card';
+                    window.location.href = '/Home';
                 }
             }
             catch(e)
@@ -135,74 +136,97 @@ export default function InitializeProfile()
 
     return (
         <Container>
-            {showDescription ?
-                <Row>
-                    <Col>
+            <Modal
+                centered
+                show={true}
+                aria-labelledby="contained-modal-title-vcenter"
+                keyboard={false}
+                backdrop="static"
+                dialogClassName="modal-40w"
+                >
+                <Modal.Header>
+                    <Modal.Title className="title-extra">
+                        Descriptions 
+                        <span id="pw-warning">{message}</span>
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {showDescription ?
                         <Row>
                             <Col>
-                                <h1>Add some descriptions</h1>
+                                <Row>
+                                    <Col>
+                                        <h1>Descriptions</h1>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <input type="text" className="description" placeholder='description' ref={(c) => description = c}></input>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <button className='btn' onClick={save_profile}>Save</button>
+                                    <span>{message}</span>
+                                </Row>
                             </Col>
                         </Row>
+                        :
                         <Row>
                             <Col>
-                                <input type="text" className="description" placeholder='description' ref={(c) => description = c}></input>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <button className='btn' onClick={save_profile}>Save</button>
-                            <span>{message}</span>
-                        </Row>
-                    </Col>
-                </Row>
-                :
-                <Row>
-                    <Col>
-                        <Row>
-                            <Col>
-                                <h1>What are your interests</h1>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_game_development(!game_development)} value='game development'/>
-                            
-                                <input type='button' className='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/>
-                            </Col>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
-                            
-                                <input type='button' className='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/>
-                            </Col>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
-            
-                                <input type='button' className='select_btn' onClick={() => set_writer(!writer)}  value='writer'/>
-                            </Col>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
+                                <Row>
+                                    <Col>
+                                        <h5 className="option-header">Select any amount</h5>
+                                    </Col>
+                                </Row>
+                                <Row className="description-options">
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-01" onClick={() => set_game_development(!game_development)}/>
+                                            <label className="ninja-label" for="option-01">
+                                                <span className="ninja-text">game development</span>
+                                            </label>
+                                        </div>
+                                    
+                                        <input type='button' className='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <input type='button' className='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
+                                    
+                                        <input type='button' className='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <input type='button' className='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
                     
-                                <input type='button' className='select_btn' onClick={() => set_networking(!networking)}  value='networking'/>
-                            </Col>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
+                                        <input type='button' className='select_btn' onClick={() => set_writer(!writer)}  value='writer'/>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <input type='button' className='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
+                            
+                                        <input type='button' className='select_btn' onClick={() => set_networking(!networking)}  value='networking'/>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <input type='button' className='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
 
-                                <input type='button' className='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/>
-                            </Col>
-                            <Col>
-                                <input type='button' className='select_btn' onClick={() => set_research(!research)}  value='research'/>
-                                
-                                <input type='button' className='select_btn' onClick={() => set_other(!other)}  value='other'/>
-                            </Col>
-                            <Col>
-                                <span>{message}</span>
-
-                                <button class='btn' onClick={save_tages}>Next</button>
+                                        <input type='button' className='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <input type='button' className='select_btn' onClick={() => set_research(!research)}  value='research'/>
+                                        
+                                        <input type='button' className='select_btn' onClick={() => set_other(!other)}  value='other'/>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
-                    </Col>
-                </Row>
+                    }
+                </Modal.Body>
 
-            }
+                <Modal.Footer className="initial-footer">
+                    <Button variant="secondary" size="sm" className="return-btn">Logout</Button>
+
+                    <Button variant="success" onClick={save_tages} size="sm" className="continue-btn">Save changes</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 }
