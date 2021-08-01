@@ -802,16 +802,16 @@ body {
  transform: translateY(4px);
 }
 
-.home-header {
- display: flex;
- justify-content: center;
- align-items: center;
-}
-
 .pulse {
  color: white;
 }
 
 .title-link {
  text-decoration: none;
+}
+
+.status-message {
+ display: flex;
+ justify-content: center;
+ margin-top: 2%;
 }
