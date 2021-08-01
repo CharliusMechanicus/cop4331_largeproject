@@ -310,9 +310,6 @@ function Home()
     return (
         <Container fluid className="content">
             <Row className="home-header">
-                <Col className="status-message">
-                    <h4 className="pulse">{message}</h4>
-                </Col>
                 <Col className="setiings-header">
                     {options.map((props, idx) => (
                         <ShowSettings key={idx} {...props} />
@@ -325,6 +322,11 @@ function Home()
                     {options.map((props, idx) => (
                         <ShowMatchList key={idx} placement={'end'} {...props} />
                     ))}
+                </Col>
+            </Row>
+            <Row className="center-piece-head">
+                <Col className="status-message">
+                    <h4 className="pulse">{message}</h4>
                 </Col>
             </Row>
             <Row className="center-piece">
