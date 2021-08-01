@@ -811,3 +811,7 @@ body {
 .pulse {
  color: white;
 }
+
+.title-link {
+ text-decoration: none;
+}
