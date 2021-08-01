@@ -95,7 +95,7 @@ function SignUpModal() {
                   <Col className="selection-component">
                     <Row>
                       <Col>
-                        <p id="i-select">Members</p>
+                        <p id="m-select">Members</p>
                       </Col>
                       <Col>
                         <Switch 
@@ -158,6 +158,7 @@ function LoginModal()
             var res = JSON.parse(await response.text());
 
             var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
+            
             var user_data = JSON.stringify(user);
             
             // ready state is 0, send user to email verification page.
