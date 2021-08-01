@@ -73,6 +73,7 @@
  position: relative;
  color: white;
  font-size: 40px;
+ cursor: pointer;
 }
 
 .fire_hand {
@@ -766,6 +767,7 @@ body {
 .email_verify_input {
  border-radius: 15px;
  border-width: 1px;
+ width: 60%;
 }
 
 .modal-popular {
@@ -798,4 +800,14 @@ body {
 .accept-icon:active {
  cursor: pointer;
  transform: translateY(4px);
+}
+
+.home-header {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.pulse {
+ color: white;
 }

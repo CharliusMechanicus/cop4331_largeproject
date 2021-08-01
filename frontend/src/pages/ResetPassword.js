@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
+import {Link} from "react-router-dom";
 
 function ResetPassword()
 {
@@ -83,6 +84,18 @@ function ResetPassword()
 
     return (
         <Container fluid className='email_verification'>
+            <Row className="main-header">
+                <Col xs={1} className="main-fire-icon">
+                <Link to={'/'} className="title-link">
+                    <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+                </Link>
+                </Col>
+                <Col xs={1} className="main-header-title">
+                <Link to={'/'} className="title-link">
+                    <h1 className='top_title'>Kindling</h1>
+                </Link>
+                </Col>
+            </Row>
             <Modal
                 centered
                 show={true}
@@ -124,7 +137,7 @@ function ResetPassword()
                 </Modal.Body>
 
                 <Modal.Footer className="initial-footer">
-                    <button className='logout-btn-footer' onClick={doLogout}>Logout</button>
+                    <button className='logout-btn-footer' onClick={doLogout}>Return</button>
 
                     {showSendEmail ?
                         <button className="continue-btn" id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>

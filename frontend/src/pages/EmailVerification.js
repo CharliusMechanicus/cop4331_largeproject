@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
-import '../App.css';
+import {Link} from "react-router-dom";
 
 function EmailVerification()
 {
@@ -73,6 +73,18 @@ function EmailVerification()
 
     return(
         <Container fluid className='email_verification'>
+            <Row className="main-header">
+                <Col xs={1} className="main-fire-icon">
+                <Link to={'/'} className="title-link">
+                    <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+                </Link>
+                </Col>
+                <Col xs={1} className="main-header-title">
+                <Link to={'/'} className="title-link">
+                    <h1 className='top_title'>Kindling</h1>
+                </Link>
+                </Col>
+            </Row>
             <Modal
                 centered
                 show={true}
