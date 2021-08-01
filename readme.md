@@ -1,6 +1,11 @@
 # Kindling
 Objective: Develop an app utilizing the MERN stack
 
+## Install the following dependencies in this folder on your local environment
+`npm install nodemailer`
+
+`npm install express-fileupload`
+
 ### COP 4331
 
 ## Team Members and Roles
@@ -13,13 +18,6 @@ Objective: Develop an app utilizing the MERN stack
 | Peyton  | API  |
 | Kiersten  | Mobile App  |
 | Joseph  | Mobile App  |
-
-## Task list
-
-- [X] Setup github
-- [ ] Setup Heroku
-- [ ] Integrate github and Heroku
-- [ ] Come up with Project Title
 
 ### MERN Stack Technology
 Web App (React.JS)

@@ -1,3 +1,25 @@
+# IMPORTANT READ THIS: Getting Setup
+1. Navigate to a folder of your choice
+2. Using the git desktop app or the git command line, clone the forked repo.
+  + git clone https://github.com/rna-devknight/cop4331_largeproject.git
+
+This forked repo has a working web host to ensure that local builds work on the server as well.
+To get started with your local environment run the following commands in this folder:
+
+`sudo npm install`
+
+`npm install react-router-dom`
+
+`npm install --save react-tinder-card`
+
+`npm install react-switch`
+
+`npm install react-bootstrap@next bootstrap@5.0.2`
+
+You will also have to run: `touch .env` and place the appropriate line of code from the discord into there.
+
+Last, but not least, navigate to the src folder and follow the workflow. 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -6,7 +6,19 @@
 ************/
 import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+
+/***********
+|  PAGES   |
+************/
+import MainPage from './pages/MainPage';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import InitializeProfile from './pages/InitializeProfile';
+import ResetPassword from './pages/ResetPassword';
+import Home from './pages/Home';
+import EmailVerification from './pages/EmailVerification';
 
 /***********************************************************************************************************/
 
@@ -19,8 +31,34 @@ function App() {
     <Router>
       <Switch>
         <Route path="/" exact>
-          // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE
+          {/* // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE */}
+          <MainPage/>
         </Route>
+
+        <Route path="/Login" exact>
+          <Login/>
+        </Route>
+
+        <Route path="/SignUp" exact>
+          <SignUp/>
+        </Route>
+
+        <Route path="/InitializeProfile" exact>
+          <InitializeProfile/>
+        </Route>
+
+        <Route path="/ResetPassword" exact>
+          <ResetPassword/>
+        </Route>
+
+        <Route path="/Home" exact>
+          <Home/>
+        </Route>
+
+        <Route path="/EmailVerification" exact>
+          <EmailVerification/>
+        </Route>
+
         <Redirect to="/" />
       </Switch>  
     </Router>
