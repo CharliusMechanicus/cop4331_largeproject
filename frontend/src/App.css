@@ -277,7 +277,8 @@ body {
 
 .card {
  color: #000000;
- margin-top: 6%;
+ width: 40%;
+ text-align: center;
 }
 
 .accept-reject {
@@ -289,6 +290,7 @@ body {
 /* Remove in final */
 .footer-buttons {
  flex-direction: column;
+ margin-top: 25%;
 }
 
 .settings-btn,
@@ -454,22 +456,6 @@ body {
  padding-top: 10px;
  padding-right: 10px;
  padding-left: 10px;
-}
-
-#resetBtn {
- border: 0;
- background: #ffa347;
- display: block;
- margin: auto;
- text-align: center;
- border: 2px solid #d9d9d9;
- padding: 10px;
- outline: none;
- color: white;
- border-radius: 24px;
- transition: 0.24s;
- font-size: 18px;
- position: relative;
 }
 
 .main-header {
@@ -754,4 +740,62 @@ body {
 
 .description {
  resize: both;
+}
+
+.match_list_name {
+ color: #bf4342;
+ font-weight: bold;
+}
+
+.swipe_card {
+ display: flex;
+ justify-content: center;
+ position: absolute;
+ margin-top: 15%;
+}
+
+#update_name,
+#update_phonenumber {
+ border-radius: 10px;
+ border-width: 1px;
+}
+
+.reset_input,
+.verification_code,
+.newpassword,
+.email_verify_input {
+ border-radius: 15px;
+ border-width: 1px;
+}
+
+.modal-popular {
+ display: flex;
+ justify-content: center;
+}
+
+.modal-special {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ flex-direction: column;
+}
+
+.modal-special input {
+ margin-bottom: 15px;
+ width: 60%;
+}
+
+.email_verify_input {
+ width: 60%;
+}
+
+.reject-icon,
+.accept-icon {
+ cursor: pointer;
+}
+
+.reject-icon:active,
+.accept-icon:active {
+ cursor: pointer;
+ transform: translateY(4px);
 }

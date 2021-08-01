@@ -86,15 +86,19 @@ function ShowSettings({...props }) {
                     <Row className="settings-content">
                         <Row className="input-block">
                             <h3>Name</h3>
+
                             <input type="text" id="update_name" placeholder='displayname' ref={(c) => update_name = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Phone Number</h3>
+
                             <input type="tel" id="update_phonenumber" placeholder='phonenumber' ref={(c) => update_phonenumber = c}></input>
                         </Row>
                         <Row className="input-block">
                             <h3>Description</h3>
-                            <input type="text" id="update_description" placeholder='description' ref={(c) => update_description = c}></input>
+                            
+                            <textarea className="description-h" id="update_description" rows="5" cols="40" placeholder="Type something to get people interested!" ref={(c) => update_description = c}>
+                            </textarea>
                         </Row>
                     </Row>
 
@@ -154,19 +158,17 @@ function ShowMatchList({...props }) {
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <Container className="matchlist-block">
-                    {match_list && match_list.map((list) =>
-                        <li key={list.name}>
-                            <div className='match_list'>
-                                <span className='match_list_name'>{list.display_name_str}</span><br/>
-                                <span className='match_list_email'>{list.email_str}</span><br/>
-                                <span className='match_list_phone'>{list.phone_str}</span><br/>
-                            </div>
-                        </li>
-                    )}
-                    
-                    {/* <ListGroup>
-                        <span className="matches-block"></span>
-                    </ListGroup> */}
+                    <ListGroup className="match-user" variant="flush">
+                        {match_list && match_list.map((list) =>
+                            <ListGroup.Item>
+                                <span className='match_list_name'>{list.display_name_str}</span>
+                                <br/>
+                                <span className='match_list_email'>{list.email_str}</span>
+                                <br/>
+                                <span className='match_list_phone'>{list.phone_str}</span>
+                            </ListGroup.Item>
+                        )}
+                    </ListGroup>
                 </Container>
             </Offcanvas.Body>
         </Offcanvas>
@@ -180,6 +182,11 @@ function Home()
     const [target,setTarget] = useState('');
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('');
+
+    var card_loop = [];
+    for (let i = 0; i < 10; i++) {
+        card_loop.push({id:i});
+    }
 
     // get token and form the json request.
     var token = JSON.parse(localStorage.getItem('user_data'));
@@ -289,10 +296,10 @@ function Home()
 
     const onSwipe = (direction) => {
         // go left.
-        if (direction != 'right')
+        if (direction == 'left')
             swipe_left();
         // go right.
-        else
+        else if (direction == 'right')
             swipe_right();
     }
 
@@ -314,12 +321,21 @@ function Home()
                 </Col>
             </Row>
             <Row className="center-piece">
-                {person && <div className="card">
-                    <h1>{person.name}</h1>
-                    <h2>{person.phone}</h2>
-                    <h2>{person.email}</h2>
-                    <span>{person.description}</span>
-                </div>}
+                {card_loop.map((card) => person && 
+                    <TinderCard className='swipe_card' 	
+                        key ={card.id}	
+                        // flickOnSwipe='true'
+                        // onSwipe={(dir) => onSwipe(dir)}	
+                        preventSwipe={['up', 'down', 'left', 'right']}
+                        >
+                        <div className="card">	
+                            <h1>{person.name}</h1>	
+                            <h2>{person.phone}</h2>	
+                            <h2>{person.email}</h2>	
+                            <span>{person.description}</span><br/><br/>
+                        </div>
+                    </TinderCard>)
+                }
             </Row>
             <Row className="footer-buttons">
                 <h1>{message}</h1>
