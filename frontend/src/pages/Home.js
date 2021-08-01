@@ -160,7 +160,7 @@ function ShowMatchList({...props }) {
                 <Container className="matchlist-block">
                     <ListGroup className="match-user" variant="flush">
                         {match_list && match_list.map((list) =>
-                            <ListGroup.Item>
+                            <ListGroup.Item key={list.name}>
                                 <span className='match_list_name'>{list.display_name_str}</span>
                                 <br/>
                                 <span className='match_list_email'>{list.email_str}</span>
@@ -182,10 +182,6 @@ function Home()
     const [target,setTarget] = useState('');
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('Welcome!');
-
-    var something = localStorage.getItem.user_data;
-
-    console.log(something);
 
     // Issue might be with how we're looping?
     var card_loop = [];
