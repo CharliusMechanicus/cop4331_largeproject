@@ -113,7 +113,10 @@ function EmailVerification()
                             </Col>
                         </Row>
                     :
-                        <Row>
+                        <Row className="airplane">
+                            <Col className="airplane">
+                                <img className="airplane-img" src='/airplane.png'></img>
+                            </Col>
                             <Col className="modal-popular">
                                 <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
                             </Col>
