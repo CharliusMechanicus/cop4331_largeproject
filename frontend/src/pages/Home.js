@@ -183,6 +183,7 @@ function Home()
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('');
 
+    // Issue might be with how we're looping?
     var card_loop = [];
     for (let i = 0; i < 10; i++) {
         card_loop.push({id:i});
@@ -193,6 +194,7 @@ function Home()
     var obj = {email_str:token.email,is_group_bool:token.is_group,access_token_str:token.jwtToken};
     var js = JSON.stringify(obj);
 
+    // There might be an issue with getting/sending the target candidates email
     useEffect(()=>{
         // get the response from the server.
         fetch(api_path + 'api/get_candidate',
@@ -202,7 +204,9 @@ function Home()
         })
         .then( res => {
             var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+
             localStorage.setItem('user_data',JSON.stringify(user));
+
             setTarget(res.email_str);
         });
     },[]);
@@ -326,6 +330,8 @@ function Home()
                         key ={card.id}	
                         // flickOnSwipe='true'
                         // onSwipe={(dir) => onSwipe(dir)}	
+
+                        // Remove left and right strings to re-enable swiping
                         preventSwipe={['up', 'down', 'left', 'right']}
                         >
                         <div className="card">	
