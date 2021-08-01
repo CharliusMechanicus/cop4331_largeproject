@@ -181,7 +181,7 @@ function Home()
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const [target,setTarget] = useState('');
     const [person,setPerson] = useState(null);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('Welcome!');
 
     // Issue might be with how we're looping?
     var card_loop = [];
@@ -270,7 +270,7 @@ function Home()
             if (!res.success_bool)  return;
 
             if (res.match_bool)
-                setMessage("You get a new match!");
+                setMessage("You've got a new match!");
 
             var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
             localStorage.setItem('user_data',JSON.stringify(user));
@@ -310,6 +310,9 @@ function Home()
     return (
         <Container fluid className="content">
             <Row className="home-header">
+                <Col className="status-message">
+                    <h4 className="pulse">{message}</h4>
+                </Col>
                 <Col className="setiings-header">
                     {options.map((props, idx) => (
                         <ShowSettings key={idx} {...props} />
@@ -344,8 +347,6 @@ function Home()
                 }
             </Row>
             <Row className="footer-buttons">
-                <h1>{message}</h1>
-
                 <Col sm={8} className="accept-reject">
                     <img className="reject-icon" src="./close.png" onClick={swipe_left}></img>
 
