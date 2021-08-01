@@ -124,7 +124,18 @@ function ResetPassword()
                             </Col>
                         </Row>
                     :
-                        <Row>
+                        <Row className="airplane-input">
+                            <Col className="check-email">
+                                <h4>Please check your email</h4>
+                            </Col>
+                            <Col className="airplane">
+                                <img className="airplane-img" src='/airplane.png'></img>
+                            </Col>
+                            <Col className="check-email">
+                                <h5>A verification code has been sent to</h5>
+                                <span className="check-this"></span>
+                                <h5>Please input the code below</h5>
+                            </Col>
                             <Col className="modal-special">
                                 <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
 
