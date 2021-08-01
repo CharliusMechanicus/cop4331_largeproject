@@ -183,6 +183,10 @@ function Home()
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('Welcome!');
 
+    var something = localStorage.getItem.user_data;
+
+    console.log(something);
+
     // Issue might be with how we're looping?
     var card_loop = [];
     for (let i = 0; i < 10; i++) {
