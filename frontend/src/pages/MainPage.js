@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Switch from 'react-switch';
 import {Link} from "react-router-dom";
-
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 
 function SignUpModal() {
@@ -226,11 +225,6 @@ function LoginModal()
 
 function MainPage()
 {
-  function toLogIn()
-  {
-    window.location.href='/Login';
-  }
-
   return (
     <Container fluid>
       <Row className="main-header">

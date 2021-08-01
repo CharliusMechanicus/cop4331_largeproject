@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 
 function ResetPassword()
 {
@@ -6,6 +7,11 @@ function ResetPassword()
     const [message, setMessage] = useState('');
     const [showSendEmail, setShowSendEmail] = useState(true);
     const api_path = 'https://kindling-lp.herokuapp.com/';
+
+    const doLogout = async event => 
+    {
+        window.location.href = '/';
+    }
 
     const sendResetEmail = async event =>
     {
@@ -23,10 +29,11 @@ function ResetPassword()
             
             if( res['success_bool'] == false )
             {
-                setMessage('* Unexpected error, please register first.');
+                setMessage('*Unexpected error, please register first.');
             }
             else
             {
+                email.value = '';
                 setMessage('');
                 setShowSendEmail(false);
             }
@@ -43,7 +50,7 @@ function ResetPassword()
     {
         if (newpassword.value !== newpassword_confirm.value)
         {
-            setMessage('* Passwords do not match!');
+            setMessage('*Passwords do not match!');
         }
         else
         {
@@ -59,11 +66,11 @@ function ResetPassword()
 
                 if( res.success_bool == false )
                 {
-                    setMessage('* Uncorrect code. please try again!');
+                    setMessage('*Incorrect code. Please try again!');
                 }
                 else
                 {
-                    window.location.href = '/Login';
+                    window.location.href = '/';
                 }
             }
             catch(e)
@@ -75,30 +82,82 @@ function ResetPassword()
     }
 
     return (
-        <div id='reset_password_div'>
-            { showSendEmail ?
-            <form class='sendEmail'>
-                <h1>Email Verification</h1>
-                <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
-                <h2>{message}</h2>
-                <button class='btn' id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
-            </form>
-            :
-            <div class='reset_password'>
-                <h1>Reset Password</h1><br/>
-                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-                <input type="password" className="newpassword" id='newpassword' placeholder='new password' ref={(c) => newpassword = c}></input><br/>
-                <input type="password" className="newpassword" id='newpassword_confirm' placeholder='confirm password' ref={(c) => newpassword_confirm = c}></input><br/>
-                <span>{message}</span><br/><br/><br/>
-                <button className='bnt' id='reset_password_bnt' onClick={verifyCode}>Reset Password</button><br/>
-            </div>
-            }
-        </div>
+        <Container fluid className='email_verification'>
+            <Modal
+                centered
+                show={true}
+                aria-labelledby="contained-modal-title-vcenter"
+                keyboard={false}
+                backdrop="static"
+                dialogClassName="modal-40w"
+                >
+
+                <Modal.Header>
+                    <Modal.Title className="title-extra">
+                        {showSendEmail ?
+                            <span>Confirm Email</span>
+                        :
+                            <span>Input code</span>
+                        }
+                        <span id="pw-warning">{message}</span>
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {showSendEmail ?
+                        <Row>
+                            <Col className="modal-popular">
+                                <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
+                            </Col>
+                        </Row>
+                    :
+                        <Row>
+                            <Col className="modal-special">
+                                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
+
+                                <input type="password" className="newpassword" id='newpassword' placeholder='new password' ref={(c) => newpassword = c}></input>
+
+                                <input type="password" className="newpassword" id='newpassword_confirm' placeholder='confirm password' ref={(c) => newpassword_confirm = c}></input>
+                            </Col>
+                        </Row>
+                    }
+                </Modal.Body>
+
+                <Modal.Footer className="initial-footer">
+                    <button className='logout-btn-footer' onClick={doLogout}>Logout</button>
+
+                    {showSendEmail ?
+                        <button className="continue-btn" id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
+                    :
+                        <button className="continue-btn" onClick={verifyCode}>Continue</button>
+                    }
+                </Modal.Footer>
+            </Modal>
+        </Container>
     );
 }
 
 export default ResetPassword;
 
+{/* <div id='reset_password_div'>
+    { showSendEmail ?
+    <form class='sendEmail'>
+        <h1>Email Verification</h1>
+        <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
+        <h2>{message}</h2>
+        <button class='btn' id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
+    </form>
+    :
+    <div class='reset_password'>
+        <h1>Reset Password</h1><br/>
+        <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
+        <input type="password" className="newpassword" id='newpassword' placeholder='new password' ref={(c) => newpassword = c}></input><br/>
+        <input type="password" className="newpassword" id='newpassword_confirm' placeholder='confirm password' ref={(c) => newpassword_confirm = c}></input><br/>
+        <span>{message}</span><br/><br/><br/>
+        <button className='bnt' id='reset_password_bnt' onClick={verifyCode}>Reset Password</button><br/>
+    </div>
+    }
+</div> */}
 
 {/* <div className='email_verification'>
     <h1>Email Verification</h1>

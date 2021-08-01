@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import storage from '../tokenStorage.js';
+import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
 
 export default function InitializeProfile()
 {
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const[message, setMessage] = useState('');
     
-    const[showDescribetion, setShowDescribetion] = useState(false);
+    const[showDescription, setShowDescription] = useState(false);
     const[game_development, set_game_development] = useState(false);
     const[app_development, set_app_development] = useState(false);
     const[web_development, set_web_development] = useState(false);
@@ -19,7 +20,7 @@ export default function InitializeProfile()
     const[lab_partners, set_lab_partners] = useState(false);
     const[research, set_research] = useState(false);
     const[other, set_other] = useState(false);
-    
+
     var description;
     var token = JSON.parse(localStorage.getItem('user_data'));
     
@@ -65,6 +66,11 @@ export default function InitializeProfile()
         },
         access_token_str: token.jwtToken,
       };
+
+    const doLogout = async event => 
+    {
+        window.location.href = '/';
+    }
     
     const save_tages = async event =>
     {
@@ -83,9 +89,9 @@ export default function InitializeProfile()
             }
 
         if (num_select < 1)
-            setMessage('Please select at least one fileds.');
+            setMessage('Please select at least one field.');
         else
-            setShowDescribetion(true);
+            setShowDescription(true);
     }
 
     const save_profile = async event =>
@@ -122,7 +128,7 @@ export default function InitializeProfile()
                     var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
                     localStorage.setItem('user_data', JSON.stringify(user));
                     
-                    window.location.href = '/card';
+                    window.location.href = '/Home';
                 }
             }
             catch(e)
@@ -134,33 +140,154 @@ export default function InitializeProfile()
     }
 
     return (
-        <div class='continue_signup'>
-            { showDescribetion ? 
-                <div id='signup_description'>
-                    <h1>Add some describetion</h1><br/>
-                    <input type="text" className="description" placeholder='description' ref={(c) => description = c}></input><br/>
-                    <span>{message}</span><br/>
-                    <button className='btn' onClick={save_profile}>Save</button>
-                </div>
-                :
-                <div class='signup_tags'>
-                    <h1>What are your interests</h1>
-                    <input type='button' className='select_btn' onClick={() => set_game_development(!game_development)} value='game development'/>
-                    <input type='button' className='select_btn' onClick={() => set_app_development(!app_development)}  value='app development'/><br/>
-                    <input type='button' className='select_btn' onClick={() => set_web_development(!web_development)}  value='web development'/>
-                    <input type='button' className='select_btn' onClick={() => set_robotics(!robotics)}  value='robotics'/><br/>
-                    <input type='button' className='select_btn' onClick={() => set_graphic_design(!graphic_design)}  value='graphic design'/>
-                    <input type='button' className='select_btn' onClick={() => set_writer(!writer)}  value='writer'/><br/>
-                    <input type='button' className='select_btn' onClick={() => set_marketing(!marketing)}  value='marketing'/>
-                    <input type='button' className='select_btn' onClick={() => set_networking(!networking)}  value='networking'/><br/>
-                    <input type='button' className='select_btn' onClick={() => set_construction(!construction)}  value='construction'/>
-                    <input type='button' className='select_btn' onClick={() => set_lab_partners(!lab_partners)}  value='lab partners'/><br/>
-                    <input type='button' className='select_btn' onClick={() => set_research(!research)}  value='research'/>
-                    <input type='button' className='select_btn' onClick={() => set_other(!other)}  value='other'/><br/>
-                    <span>{message}</span><br/>
-                    <button class='btn' onClick={save_tages}>Next</button><br/>
-                </div>
-            }
-        </div>
+        <Container>
+            <Modal
+                centered
+                show={true}
+                aria-labelledby="contained-modal-title-vcenter"
+                keyboard={false}
+                backdrop="static"
+                dialogClassName="modal-40w"
+                >
+                <Modal.Header>
+                    <Modal.Title className="title-extra">
+                        Descriptions 
+                        <span id="pw-warning">{message}</span>
+                    </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {showDescription ?
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col>
+                                        <h5 className="option-header">What would you like everyone to know?</h5>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col className="text-blanket">
+                                        <textarea className="description" rows="5" cols="40" placeholder="Type something to get people interested!" ref={(c) => description = c}>
+                                        </textarea>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                        :
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col>
+                                        <h5 className="option-header">Select any amount</h5>
+                                    </Col>
+                                </Row>
+                                <Row className="description-options">
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-01" onClick={() => set_game_development(!game_development)}/>
+                                            <label className="ninja-label" for="option-01">
+                                                <span className="ninja-text">game development</span>
+                                            </label>
+                                        </div>
+                                    
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-02" onClick={() => set_app_development(!app_development)}/>
+                                            <label className="ninja-label" for="option-02">
+                                                <span className="ninja-text">app development</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-03" onClick={() => set_web_development(!web_development)}/>
+                                            <label className="ninja-label" for="option-03">
+                                                <span className="ninja-text">web development</span>
+                                            </label>
+                                        </div>
+                                    
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-04" onClick={() => set_robotics(!robotics)}  value='robotics'/>
+                                            <label className="ninja-label" for="option-04">
+                                                <span className="ninja-text">robotics</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-05" onClick={() => set_graphic_design(!graphic_design)}/>
+                                            <label className="ninja-label" for="option-05">
+                                                <span className="ninja-text">graphic design</span>
+                                            </label>
+                                        </div>
+                    
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-06" onClick={() => set_writer(!writer)}/>
+                                            <label className="ninja-label" for="option-06">
+                                                <span className="ninja-text">writer</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-07" onClick={() => set_marketing(!marketing)}/>
+                                            <label className="ninja-label" for="option-07">
+                                                <span className="ninja-text">marketing</span>
+                                            </label>
+                                        </div>
+                            
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-08" onClick={() => set_networking(!networking)}/>
+                                            <label className="ninja-label" for="option-08">
+                                                <span className="ninja-text">networking</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-09" onClick={() => set_construction(!construction)}/>
+                                            <label className="ninja-label" for="option-09">
+                                                <span className="ninja-text">construction</span>
+                                            </label>
+                                        </div>
+
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-10" onClick={() => set_lab_partners(!lab_partners)}/>
+                                            <label className="ninja-label" for="option-10">
+                                                <span className="ninja-text">lab partners</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                    <Col className="duo-group">
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-11" onClick={() => set_research(!research)}/>
+                                            <label className="ninja-label" for="option-11">
+                                                <span className="ninja-text">research</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div className="imposter">
+                                            <input type="checkbox" className="ninja-input" id="option-12" onClick={() => set_other(!other)}/>
+                                            <label className="ninja-label" for="option-12">
+                                                <span className="ninja-text">other</span>
+                                            </label>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    }
+                </Modal.Body>
+
+                <Modal.Footer className="initial-footer">
+                    <button className='logout-btn-footer' onClick={doLogout}>Logout</button>
+
+                    {showDescription ?
+                        <button className="continue-btn" onClick={save_profile}>Continue</button>
+                        :
+                        <button className="continue-btn" onClick={save_tages}>Continue</button>
+                    }
+                </Modal.Footer>
+            </Modal>
+        </Container>
     );
 }
