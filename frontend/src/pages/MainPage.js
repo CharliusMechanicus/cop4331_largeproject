@@ -229,17 +229,25 @@ function MainPage()
     <Container fluid>
       <Row className="main-header">
         <Col xs={1} className="main-fire-icon">
-          <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+          <Link to={'/'} className="title-link">
+            <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+          </Link>
         </Col>
         <Col xs={1} className="main-header-title">
-          <h1 className='top_title'>Kindling</h1>
+          <Link to={'/'} className="title-link">
+            <h1 className='top_title'>Kindling</h1>
+          </Link>
         </Col>
       </Row>
       <Row className="main-center">
         <Col sm={6} className="middle-content">
-          <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img>
+          <Link to={'/'} className="title-link">
+            <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img>
+          </Link>
   
-          <h1 className='center_text'>Kindle An Innovation</h1>
+          <Link to={'/'} className="title-link">
+            <h1 className='center_text'>Kindle An Innovation</h1>
+            </Link>
         </Col>
       </Row>
       <Row className="main-footer">
