@@ -108,7 +108,7 @@ function ResetPassword()
                 <Modal.Header>
                     <Modal.Title className="title-extra">
                         {showSendEmail ?
-                            <span>Confirm Email</span>
+                            <span>Input Email</span>
                         :
                             <span>Input code</span>
                         }
