@@ -151,30 +151,3 @@ function ResetPassword()
 }
 
 export default ResetPassword;
-
-{/* <div id='reset_password_div'>
-    { showSendEmail ?
-    <form class='sendEmail'>
-        <h1>Email Verification</h1>
-        <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
-        <h2>{message}</h2>
-        <button class='btn' id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
-    </form>
-    :
-    <div class='reset_password'>
-        <h1>Reset Password</h1><br/>
-        <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-        <input type="password" className="newpassword" id='newpassword' placeholder='new password' ref={(c) => newpassword = c}></input><br/>
-        <input type="password" className="newpassword" id='newpassword_confirm' placeholder='confirm password' ref={(c) => newpassword_confirm = c}></input><br/>
-        <span>{message}</span><br/><br/><br/>
-        <button className='bnt' id='reset_password_bnt' onClick={verifyCode}>Reset Password</button><br/>
-    </div>
-    }
-</div> */}
-
-{/* <div className='email_verification'>
-    <h1>Email Verification</h1>
-    <input type='email' className='reset_input' ref={(c) => email = c} placeholder='email'></input><br/>
-    <h2>{message}</h2><br/><br/><br/>
-    <button className='btn' id='reset_email_verify_btn' onClick={sendResetEmail}>Send Rest Email</button>
-</div> */}

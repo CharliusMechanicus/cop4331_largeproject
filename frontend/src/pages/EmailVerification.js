@@ -137,21 +137,3 @@ function EmailVerification()
 }
 
 export default EmailVerification;
-
-{/* <div className='email_verification'>
-{showSend ? 
-    <div className='sendEmail'>
-        <h1>Email Verification</h1>
-        <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='email'></input><br/>
-        <button className='btn' id='email_verify_btn' onClick={sendEmail}>Send Email</button>
-        <h2>{message}</h2>
-    </div>
-    :
-    <div className='codeVerification'>
-        <h1>Code Verification</h1>
-        <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-        <button className='btn' id='code_verify_btn' onClick={verifyCode}>Verify Code</button>
-        <h2>{message}</h2>
-    </div>
-}
-</div> */}
