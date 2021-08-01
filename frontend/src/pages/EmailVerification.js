@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 function EmailVerification()
 {
     var email,code;
-    const [message,setMessage] = useState('');
+    const [message, setMessage] = useState('');
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const [showSend, setShowSend] = useState(true);
 
@@ -28,7 +28,7 @@ function EmailVerification()
             
             if( res['success_bool'] == false )
             {
-                setMessage('* Unexpect error, please try again or register first.');
+                setMessage('*Unexpect error, please try again or register first.');
             }
             else
             {
@@ -109,16 +109,24 @@ function EmailVerification()
                     {showSend ?
                         <Row>
                             <Col className="modal-popular">
-                                <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='email'></input>
+                                <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='Email'></input>
                             </Col>
                         </Row>
                     :
-                        <Row className="airplane">
+                        <Row className="airplane-input">
+                            <Col className="check-email">
+                                <h4>Please check your email</h4>
+                            </Col>
                             <Col className="airplane">
                                 <img className="airplane-img" src='/airplane.png'></img>
                             </Col>
+                            <Col className="check-email">
+                                <h5>A verification code has been sent to</h5>
+                                <span className="check-this"></span>
+                                <h5>Please input the code below</h5>
+                            </Col>
                             <Col className="modal-popular">
-                                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
+                                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='Code'></input>
                             </Col>
                         </Row>
                     }
