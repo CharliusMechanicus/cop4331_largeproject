@@ -119,19 +119,12 @@ function ShowSettings({...props }) {
 
 function ShowMatchList({...props }) {
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
-    const toggleShow = () => setShow((s) => !s);
 
-    var user_data = localStorage.getItem('user_data');
-    var token = JSON.parse(user_data);
-    const api_path = 'https://kindling-lp.herokuapp.com/';
-    const [match_list, setList] = useState(null);
-    var obj = {email_str:token.email,output_select_str:'e',access_token_str:token.jwtToken};
-    var js = JSON.stringify(obj);
-
-    useEffect(() => 
+    const toggleShow = () => 
     {
+        setShow((s) => !s);
+       
         fetch(api_path + 'api/get_matches',
         {method:'POST',body:js,headers:{'Content-Type': 'application/json'}})
         .then(res => {
@@ -144,7 +137,14 @@ function ShowMatchList({...props }) {
 
             setList(res.matches_array);
         });
-    },[]);
+    }
+    
+    var user_data = localStorage.getItem('user_data');
+    var token = JSON.parse(user_data);
+    const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [match_list, setList] = useState(null);
+    var obj = {email_str:token.email,output_select_str:'e',access_token_str:token.jwtToken};
+    var js = JSON.stringify(obj);
 
     return (
         <>
@@ -234,6 +234,7 @@ function Home()
 
     const swipe_left = () => 
     {
+        setMessage("");
         token = JSON.parse(localStorage.getItem('user_data'));
         obj = {email_str:token.email,is_group_bool:token.is_group,target_email_str:target,access_token_str:token.jwtToken};
         js = JSON.stringify(obj);
@@ -253,6 +254,7 @@ function Home()
 
     const swipe_right = () => 
     {
+        setMessage("");
         token = JSON.parse(localStorage.getItem('user_data'));
         obj = {email_str:token.email,is_group_bool:token.is_group,target_email_str:target,access_token_str:token.jwtToken};
         js = JSON.stringify(obj);
@@ -265,8 +267,11 @@ function Home()
         .then( res => {
             if (!res.success_bool)  return;
 
-            if (res.match_bool)
+            if (res.match_bool === true)
+            {
                 setMessage("You get a new match!");
+            }
+                
 
             var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
             localStorage.setItem('user_data',JSON.stringify(user));
@@ -323,10 +328,9 @@ function Home()
             <Row className="center-piece">
                 {card_loop.map((card) => person && 
                     <TinderCard className='swipe_card' 	
-                        key ={card.id}	
-                        // flickOnSwipe='true'
-                        // onSwipe={(dir) => onSwipe(dir)}	
-                        preventSwipe={['up', 'down', 'left', 'right']}
+                        key ={person.email}	
+                        onSwipe={(dir) => onSwipe(dir)}	
+                        preventSwipe={['up', 'down']}
                         >
                         <div className="card">	
                             <h1>{person.name}</h1>	
