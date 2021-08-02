@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import storage from '../tokenStorage.js';
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
+import {Link} from "react-router-dom";
 
 export default function InitializeProfile()
 {
@@ -141,6 +142,18 @@ export default function InitializeProfile()
 
     return (
         <Container>
+            <Row className="main-header">
+                <Col xs={1} className="main-fire-icon">
+                <Link to={'/'} className="title-link">
+                    <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+                </Link>
+                </Col>
+                <Col xs={1} className="main-header-title">
+                <Link to={'/'} className="title-link">
+                    <h1 className='top_title'>Kindling</h1>
+                </Link>
+                </Col>
+            </Row>
             <Modal
                 centered
                 show={true}

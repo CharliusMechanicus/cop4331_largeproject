@@ -13,8 +13,6 @@ import './App.css';
 |  PAGES   |
 ************/
 import MainPage from './pages/MainPage';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
 import InitializeProfile from './pages/InitializeProfile';
 import ResetPassword from './pages/ResetPassword';
 import Home from './pages/Home';
@@ -33,14 +31,6 @@ function App() {
         <Route path="/" exact>
           {/* // INSERT HOME INDEX PAGE THAT YOU IMPORTED HERE */}
           <MainPage/>
-        </Route>
-
-        <Route path="/Login" exact>
-          <Login/>
-        </Route>
-
-        <Route path="/SignUp" exact>
-          <SignUp/>
         </Route>
 
         <Route path="/InitializeProfile" exact>

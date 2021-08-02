@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
+import {Link} from "react-router-dom";
 
 function ResetPassword()
 {
@@ -83,6 +84,18 @@ function ResetPassword()
 
     return (
         <Container fluid className='email_verification'>
+            <Row className="main-header">
+                <Col xs={1} className="main-fire-icon">
+                <Link to={'/'} className="title-link">
+                    <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+                </Link>
+                </Col>
+                <Col xs={1} className="main-header-title">
+                <Link to={'/'} className="title-link">
+                    <h1 className='top_title'>Kindling</h1>
+                </Link>
+                </Col>
+            </Row>
             <Modal
                 centered
                 show={true}
@@ -95,7 +108,7 @@ function ResetPassword()
                 <Modal.Header>
                     <Modal.Title className="title-extra">
                         {showSendEmail ?
-                            <span>Confirm Email</span>
+                            <span>Input Email</span>
                         :
                             <span>Input code</span>
                         }
@@ -111,7 +124,18 @@ function ResetPassword()
                             </Col>
                         </Row>
                     :
-                        <Row>
+                        <Row className="airplane-input">
+                            <Col className="check-email">
+                                <h4>Please check your email</h4>
+                            </Col>
+                            <Col className="airplane">
+                                <img className="airplane-img" src='/airplane.png'></img>
+                            </Col>
+                            <Col className="check-email">
+                                <h5>A verification code has been sent to</h5>
+                                <span className="check-this"></span>
+                                <h5>Please input the code below</h5>
+                            </Col>
                             <Col className="modal-special">
                                 <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
 
@@ -124,7 +148,7 @@ function ResetPassword()
                 </Modal.Body>
 
                 <Modal.Footer className="initial-footer">
-                    <button className='logout-btn-footer' onClick={doLogout}>Logout</button>
+                    <button className='logout-btn-footer' onClick={doLogout}>Return</button>
 
                     {showSendEmail ?
                         <button className="continue-btn" id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
@@ -138,30 +162,3 @@ function ResetPassword()
 }
 
 export default ResetPassword;
-
-{/* <div id='reset_password_div'>
-    { showSendEmail ?
-    <form class='sendEmail'>
-        <h1>Email Verification</h1>
-        <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
-        <h2>{message}</h2>
-        <button class='btn' id='resetBtn' onClick={sendResetEmail}>Send Reset Email</button>
-    </form>
-    :
-    <div class='reset_password'>
-        <h1>Reset Password</h1><br/>
-        <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-        <input type="password" className="newpassword" id='newpassword' placeholder='new password' ref={(c) => newpassword = c}></input><br/>
-        <input type="password" className="newpassword" id='newpassword_confirm' placeholder='confirm password' ref={(c) => newpassword_confirm = c}></input><br/>
-        <span>{message}</span><br/><br/><br/>
-        <button className='bnt' id='reset_password_bnt' onClick={verifyCode}>Reset Password</button><br/>
-    </div>
-    }
-</div> */}
-
-{/* <div className='email_verification'>
-    <h1>Email Verification</h1>
-    <input type='email' className='reset_input' ref={(c) => email = c} placeholder='email'></input><br/>
-    <h2>{message}</h2><br/><br/><br/>
-    <button className='btn' id='reset_email_verify_btn' onClick={sendResetEmail}>Send Rest Email</button>
-</div> */}
