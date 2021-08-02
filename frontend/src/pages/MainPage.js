@@ -95,7 +95,7 @@ function SignUpModal() {
                   <Col className="selection-component">
                     <Row>
                       <Col>
-                        <p id="i-select">Members</p>
+                        <p id="m-select">Members</p>
                       </Col>
                       <Col>
                         <Switch 
@@ -158,6 +158,7 @@ function LoginModal()
             var res = JSON.parse(await response.text());
 
             var user = {email:loginName.value, is_group:res.is_group_bool ,jwtToken:res.access_token_str};
+            
             var user_data = JSON.stringify(user);
             
             // ready state is 0, send user to email verification page.
@@ -229,17 +230,25 @@ function MainPage()
     <Container fluid>
       <Row className="main-header">
         <Col xs={1} className="main-fire-icon">
-          <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+          <Link to={'/'} className="title-link">
+            <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+          </Link>
         </Col>
         <Col xs={1} className="main-header-title">
-          <h1 className='top_title'>Kindling</h1>
+          <Link to={'/'} className="title-link">
+            <h1 className='top_title'>Kindling</h1>
+          </Link>
         </Col>
       </Row>
       <Row className="main-center">
         <Col sm={6} className="middle-content">
-          <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img>
+          <Link to={'/'} className="title-link">
+            <img class='fire_hand' id='small_icon' src='/fire-hand.png'></img>
+          </Link>
   
-          <h1 className='center_text'>Kindle An Innovation</h1>
+          <Link to={'/'} className="title-link">
+            <h1 className='center_text'>Kindle An Innovation</h1>
+            </Link>
         </Col>
       </Row>
       <Row className="main-footer">

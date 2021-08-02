@@ -160,7 +160,7 @@ function ShowMatchList({...props }) {
                 <Container className="matchlist-block">
                     <ListGroup className="match-user" variant="flush">
                         {match_list && match_list.map((list) =>
-                            <ListGroup.Item>
+                            <ListGroup.Item key={list.name}>
                                 <span className='match_list_name'>{list.display_name_str}</span>
                                 <br/>
                                 <span className='match_list_email'>{list.email_str}</span>
@@ -181,8 +181,9 @@ function Home()
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const [target,setTarget] = useState('');
     const [person,setPerson] = useState(null);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('Welcome!');
 
+    // Issue might be with how we're looping?
     var card_loop = [];
     for (let i = 0; i < 10; i++) {
         card_loop.push({id:i});
@@ -193,6 +194,7 @@ function Home()
     var obj = {email_str:token.email,is_group_bool:token.is_group,access_token_str:token.jwtToken};
     var js = JSON.stringify(obj);
 
+    // There might be an issue with getting/sending the target candidates email
     useEffect(()=>{
         // get the response from the server.
         fetch(api_path + 'api/get_candidate',
@@ -202,7 +204,9 @@ function Home()
         })
         .then( res => {
             var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
+
             localStorage.setItem('user_data',JSON.stringify(user));
+
             setTarget(res.email_str);
         });
     },[]);
@@ -271,7 +275,6 @@ function Home()
             {
                 setMessage("You get a new match!");
             }
-                
 
             var user = {email:token.email,is_group:token.is_group,jwtToken:res.refreshed_token_str};
             localStorage.setItem('user_data',JSON.stringify(user));
@@ -325,6 +328,11 @@ function Home()
                     ))}
                 </Col>
             </Row>
+            <Row className="center-piece-head">
+                <Col className="status-message">
+                    <h4 className="pulse">{message}</h4>
+                </Col>
+            </Row>
             <Row className="center-piece">
                 {card_loop.map((card) => person && 
                     <TinderCard className='swipe_card' 	
@@ -342,8 +350,6 @@ function Home()
                 }
             </Row>
             <Row className="footer-buttons">
-                <h1>{message}</h1>
-
                 <Col sm={8} className="accept-reject">
                     <img className="reject-icon" src="./close.png" onClick={swipe_left}></img>
 
