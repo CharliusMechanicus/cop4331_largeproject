@@ -286,9 +286,11 @@ body {
 }
 
 .card {
- color: #000000;
- width: 40%;
+ color: #ffffff;
+ width: 50%;
  text-align: center;
+ border-radius: 15px;
+ background-color: #bf4342;
 }
 
 .accept-reject {
@@ -771,6 +773,7 @@ body {
 #update_phonenumber {
  border-radius: 10px;
  border-width: 1px;
+ padding-left: 5px;
 }
 
 .reset_input,
@@ -853,4 +856,8 @@ body {
 
 .check-bottom {
  margin-top: 5px;
+}
+
+.decription-h {
+ padding-left: 5px;
 }
