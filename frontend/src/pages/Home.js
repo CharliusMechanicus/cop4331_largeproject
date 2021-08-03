@@ -22,7 +22,7 @@ function ShowSettings({...props }) {
     var token = JSON.parse(localStorage.getItem('user_data'));
     const [message, setMessage] = useState('');
 
-    const doLogout = async event => 
+    const doLogout = async event =>
     {
         window.location.href = '/';
     }
@@ -84,22 +84,22 @@ function ShowSettings({...props }) {
             <Offcanvas.Body>
                 <Container fluid className="settings-block">
                     <Row className="settings-content">
-                        <Row className="input-block">
+                        <Col className="input-block">
                             <h3>Name</h3>
 
                             <input type="text" id="update_name" placeholder='displayname' ref={(c) => update_name = c}></input>
-                        </Row>
-                        <Row className="input-block">
+                        </Col>
+                        <Col className="input-block">
                             <h3>Phone Number</h3>
 
                             <input type="tel" id="update_phonenumber" placeholder='phonenumber' ref={(c) => update_phonenumber = c}></input>
-                        </Row>
-                        <Row className="input-block">
+                        </Col>
+                        <Col className="input-block">
                             <h3>Description</h3>
                             
                             <textarea className="description-h" id="update_description" rows="5" cols="40" placeholder="Type something to get people interested!" ref={(c) => update_description = c}>
                             </textarea>
-                        </Row>
+                        </Col>
                     </Row>
 
                     <Row className="btn-group">
@@ -183,9 +183,8 @@ function Home()
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('Welcome!');
 
-    // Issue might be with how we're looping?
     var card_loop = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1; i++) {
         card_loop.push({id:i});
     }
 
@@ -194,7 +193,6 @@ function Home()
     var obj = {email_str:token.email,is_group_bool:token.is_group,access_token_str:token.jwtToken};
     var js = JSON.stringify(obj);
 
-    // There might be an issue with getting/sending the target candidates email
     useEffect(()=>{
         // get the response from the server.
         fetch(api_path + 'api/get_candidate',
@@ -341,10 +339,8 @@ function Home()
                         preventSwipe={['up', 'down']}
                         >
                         <div className="card">	
-                            <h1>{person.name}</h1>	
-                            <h2>{person.phone}</h2>	
-                            <h2>{person.email}</h2>	
-                            <span>{person.description}</span><br/><br/>
+                            <h1>{person.name}</h1>
+                            <span className="users-description">{person.description}</span>
                         </div>
                     </TinderCard>)
                 }
