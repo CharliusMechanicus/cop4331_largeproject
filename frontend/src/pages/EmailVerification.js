@@ -101,9 +101,9 @@ function EmailVerification()
                 <Modal.Header>
                     <Modal.Title className="title-extra">
                         {showSend ?
-                            <span>Confirm Email</span>
+                            <span className="title-header">Confirm Email</span>
                         :
-                            <span>Input code</span>
+                            <span className="title-header">Input code</span>
                         }
                         <span id="pw-warning">{message}</span>
                     </Modal.Title>

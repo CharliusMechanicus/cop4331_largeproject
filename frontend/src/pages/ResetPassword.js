@@ -111,9 +111,9 @@ function ResetPassword()
                 <Modal.Header>
                     <Modal.Title className="title-extra">
                         {showSendEmail ?
-                            <span>Input Email</span>
+                            <span className="title-header">Input Email</span>
                         :
-                            <span>Input code</span>
+                            <span className="title-header">Input code</span>
                         }
                         <span id="pw-warning">{message}</span>
                     </Modal.Title>
