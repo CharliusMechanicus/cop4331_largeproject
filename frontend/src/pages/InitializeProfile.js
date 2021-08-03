@@ -171,7 +171,7 @@ export default function InitializeProfile()
 
                 <Modal.Body>
                     {showDescription ?
-                        <Row>
+                        <Row className="description-body">
                             <Col>
                                 <Row>
                                     <Col>
@@ -187,7 +187,7 @@ export default function InitializeProfile()
                             </Col>
                         </Row>
                         :
-                        <Row>
+                        <Row className="description-body">
                             <Col>
                                 <Row>
                                     <Col>

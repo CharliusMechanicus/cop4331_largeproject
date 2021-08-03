@@ -861,3 +861,16 @@ body {
 .decription-h {
  padding-left: 5px;
 }
+
+.title-header {
+ width: 190px;
+}
+
+.description-body {
+ margin-left: 4%;
+}
+
+.description-h,
+.description {
+ padding-left: 5px;
+}
