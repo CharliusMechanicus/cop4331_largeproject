@@ -1987,7 +1987,7 @@ exports.setApp = function(app, client)
     /*********************************************************************************************/
     
     // IF TOKEN IS NOT VALID
-    if(!is_token_valid(user_access_token_str, user_email_str))
+    if(!is_token_valid(user_access_token_str, user_email_str, "d"))
     {
       send_default_profile_picture(res);
       return;
