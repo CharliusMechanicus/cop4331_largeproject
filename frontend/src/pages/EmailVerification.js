@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {Container, Row, Col, Button, Modal} from 'react-bootstrap';
-import '../App.css';
+import {Link} from "react-router-dom";
 
 function EmailVerification()
 {
     var email,code;
-    const [message,setMessage] = useState('');
+    const [message, setMessage] = useState('');
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const [showSend, setShowSend] = useState(true);
+    const [displayEmail, setEmail] = useState('');
 
     const doLogout = async event => 
     {
@@ -19,6 +20,8 @@ function EmailVerification()
         var obj = {email_str:email.value};
         var js = JSON.stringify(obj);
 
+        setEmail(email.value);
+
         try
         {    
             const response = await fetch(api_path + 'api/send_verification_email',
@@ -28,11 +31,12 @@ function EmailVerification()
             
             if( res['success_bool'] == false )
             {
-                setMessage('* Unexpect error, please try again or register first.');
+                setMessage('*Unexpect error, please try again or register first.');
             }
             else
             {
-                email.value = '';
+                email = '';
+                setMessage('');
                 setShowSend(false);
             }
         }
@@ -73,6 +77,18 @@ function EmailVerification()
 
     return(
         <Container fluid className='email_verification'>
+            <Row className="main-header">
+                <Col xs={1} className="main-fire-icon">
+                <Link to={'/'} className="title-link">
+                    <img className='fire' id='small_icon' src='/kindling-icon.png'></img>
+                </Link>
+                </Col>
+                <Col xs={1} className="main-header-title">
+                <Link to={'/'} className="title-link">
+                    <h1 className='top_title'>Kindling</h1>
+                </Link>
+                </Col>
+            </Row>
             <Modal
                 centered
                 show={true}
@@ -97,13 +113,24 @@ function EmailVerification()
                     {showSend ?
                         <Row>
                             <Col className="modal-popular">
-                                <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='email'></input>
+                                <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='Email'></input>
                             </Col>
                         </Row>
                     :
-                        <Row>
+                        <Row className="airplane-input">
+                            <Col className="check-email">
+                                <h4>Please check your email</h4>
+                            </Col>
+                            <Col className="airplane">
+                                <img className="airplane-img" src='/airplane.png'></img>
+                            </Col>
+                            <Col className="check-email">
+                                <h5>A verification code has been sent to</h5>
+                                <span className="check-this">{displayEmail}</span>
+                                <h5 className="check-bottom">Please input the code below</h5>
+                            </Col>
                             <Col className="modal-popular">
-                                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>
+                                <input type='text' className='verification_code' ref={(c) => code = c} placeholder='Code'></input>
                             </Col>
                         </Row>
                     }
@@ -125,21 +152,3 @@ function EmailVerification()
 }
 
 export default EmailVerification;
-
-{/* <div className='email_verification'>
-{showSend ? 
-    <div className='sendEmail'>
-        <h1>Email Verification</h1>
-        <input type='email' className='email_verify_input' ref={(c) => email = c} placeholder='email'></input><br/>
-        <button className='btn' id='email_verify_btn' onClick={sendEmail}>Send Email</button>
-        <h2>{message}</h2>
-    </div>
-    :
-    <div className='codeVerification'>
-        <h1>Code Verification</h1>
-        <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input><br/>
-        <button className='btn' id='code_verify_btn' onClick={verifyCode}>Verify Code</button>
-        <h2>{message}</h2>
-    </div>
-}
-</div> */}

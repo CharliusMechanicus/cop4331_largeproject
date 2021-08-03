@@ -73,6 +73,7 @@
  position: relative;
  color: white;
  font-size: 40px;
+ cursor: pointer;
 }
 
 .fire_hand {
@@ -151,6 +152,15 @@ body {
  background: url("./background.png");
  background-size: cover;
  background-repeat: no-repeat;
+ min-height: 100vh;
+}
+
+* {
+ margin: 0px;
+ padding: 0px;
+ max-width: 100%;
+ box-sizing: border-box;
+ -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .login-box {
@@ -464,13 +474,13 @@ body {
  flex-wrap: nowrap;
  justify-content: flex-start;
  align-items: center;
- margin-top: 10px;
 }
 
 .main-fire-icon {
  display: flex;
  justify-content: center;
  align-items: center;
+ padding-top: 10px;
 }
 
 .main-header-title {
@@ -511,6 +521,7 @@ body {
 .signup-input-group {
  display: flex;
  flex-direction: column;
+ align-items: center;
 }
 
 .signup-input {
@@ -519,6 +530,8 @@ body {
  border-color: #808080;
  border-radius: 6px;
  border-width: 1px;
+ width: 90%;
+ padding-left: 5px;
 }
 
 .modal-content {
@@ -548,7 +561,7 @@ body {
  margin-top: 4%;
 }
 
-#i-select {
+#m-select {
  color: #ffa347;
  margin-right: 3%;
 }
@@ -766,6 +779,8 @@ body {
 .email_verify_input {
  border-radius: 15px;
  border-width: 1px;
+ width: 80%;
+ padding-left: 5px;
 }
 
 .modal-popular {
@@ -798,4 +813,44 @@ body {
 .accept-icon:active {
  cursor: pointer;
  transform: translateY(4px);
+}
+
+.pulse {
+ color: white;
+}
+
+.title-link {
+ text-decoration: none;
+ text-align: center;
+}
+
+.status-message {
+ display: flex;
+ justify-content: center;
+ margin-top: 2%;
+}
+
+.airplane-input {
+ display: flex;
+ flex-direction: column;
+}
+
+.check-email {
+ text-align: center;
+ margin-bottom: 5px;
+}
+
+.airplane {
+ display: flex;
+ justify-content: center;
+ margin-bottom: 10px;
+}
+
+.check-this {
+ color: #bf4342;
+ margin-bottom: 5px;
+}
+
+.check-bottom {
+ margin-top: 5px;
 }
