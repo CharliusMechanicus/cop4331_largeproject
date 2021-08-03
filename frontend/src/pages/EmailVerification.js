@@ -61,7 +61,7 @@ function EmailVerification()
             
             if( res['success_bool'] == false )
             {
-                setMessage('* Uncorrect code!');
+                setMessage('*Incorrect code!');
             }
             else
             {
