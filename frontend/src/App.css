@@ -521,6 +521,7 @@ body {
 .signup-input-group {
  display: flex;
  flex-direction: column;
+ align-items: center;
 }
 
 .signup-input {
@@ -529,6 +530,8 @@ body {
  border-color: #808080;
  border-radius: 6px;
  border-width: 1px;
+ width: 90%;
+ padding-left: 5px;
 }
 
 .modal-content {
@@ -776,7 +779,8 @@ body {
 .email_verify_input {
  border-radius: 15px;
  border-width: 1px;
- width: 60%;
+ width: 80%;
+ padding-left: 5px;
 }
 
 .modal-popular {
@@ -844,4 +848,9 @@ body {
 
 .check-this {
  color: #bf4342;
+ margin-bottom: 5px;
+}
+
+.check-bottom {
+ margin-top: 5px;
 }
