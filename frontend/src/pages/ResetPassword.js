@@ -8,6 +8,7 @@ function ResetPassword()
     const [message, setMessage] = useState('');
     const [showSendEmail, setShowSendEmail] = useState(true);
     const api_path = 'https://kindling-lp.herokuapp.com/';
+    const [displayEmail, setEmail] = useState('');
 
     const doLogout = async event => 
     {
@@ -20,6 +21,8 @@ function ResetPassword()
 
         var obj = {email_str:email.value};
         var js = JSON.stringify(obj);
+
+        setEmail(email.value);
 
         try
         {    
@@ -34,7 +37,7 @@ function ResetPassword()
             }
             else
             {
-                email.value = '';
+                email='';
                 setMessage('');
                 setShowSendEmail(false);
             }
@@ -120,7 +123,7 @@ function ResetPassword()
                     {showSendEmail ?
                         <Row>
                             <Col className="modal-popular">
-                                <input type='email' class='reset_input' ref={(c) => email = c} placeholder='email'></input>
+                                <input type='email' className='reset_input' ref={(c) => email = c} placeholder='email'></input>
                             </Col>
                         </Row>
                     :
@@ -133,8 +136,8 @@ function ResetPassword()
                             </Col>
                             <Col className="check-email">
                                 <h5>A verification code has been sent to</h5>
-                                <span className="check-this"></span>
-                                <h5>Please input the code below</h5>
+                                <span className="check-this">{displayEmail}</span>
+                                <h5 className="check-bottom">Please input the code below</h5>
                             </Col>
                             <Col className="modal-special">
                                 <input type='text' className='verification_code' ref={(c) => code = c} placeholder='code'></input>

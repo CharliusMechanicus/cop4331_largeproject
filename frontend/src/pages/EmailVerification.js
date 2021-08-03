@@ -8,6 +8,7 @@ function EmailVerification()
     const [message, setMessage] = useState('');
     const api_path = 'https://kindling-lp.herokuapp.com/';
     const [showSend, setShowSend] = useState(true);
+    const [displayEmail, setEmail] = useState('');
 
     const doLogout = async event => 
     {
@@ -18,6 +19,8 @@ function EmailVerification()
     {
         var obj = {email_str:email.value};
         var js = JSON.stringify(obj);
+
+        setEmail(email.value);
 
         try
         {    
@@ -32,7 +35,8 @@ function EmailVerification()
             }
             else
             {
-                email.value = '';
+                email = '';
+                setMessage('');
                 setShowSend(false);
             }
         }
@@ -122,8 +126,8 @@ function EmailVerification()
                             </Col>
                             <Col className="check-email">
                                 <h5>A verification code has been sent to</h5>
-                                <span className="check-this"></span>
-                                <h5>Please input the code below</h5>
+                                <span className="check-this">{displayEmail}</span>
+                                <h5 className="check-bottom">Please input the code below</h5>
                             </Col>
                             <Col className="modal-popular">
                                 <input type='text' className='verification_code' ref={(c) => code = c} placeholder='Code'></input>
