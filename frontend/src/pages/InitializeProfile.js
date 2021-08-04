@@ -188,7 +188,7 @@ export default function InitializeProfile()
                         </Row>
                         :
                         <Row className="description-body">
-                            <Col>
+                            <Col className="description-alignment">
                                 <Row>
                                     <Col>
                                         <h5 className="option-header">Select any amount</h5>
