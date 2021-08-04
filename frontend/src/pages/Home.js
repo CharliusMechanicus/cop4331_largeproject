@@ -3,7 +3,7 @@ import TinderCard from 'react-tinder-card';
 import {Link} from 'react-router-dom';
 import {Container, Row, Col, Offcanvas, Button, OffcanvasBody, OffcanvasHeader, ListGroup} from 'react-bootstrap';
 
-const options = [  
+const options = [
     {
       // name: 'Enable backdrop (default)',
       scroll: false,
@@ -12,11 +12,13 @@ const options = [
   ];
 
 function ShowSettings({...props }) {
+
+    var update_name, update_phonenumber, update_description;
+    var token = JSON.parse(localStorage.getItem('user_data'));
+
     const [show, setShow] = useState(false);
     const api_path = 'https://kindling-lp.herokuapp.com/';
-    var update_name, update_phonenumber, update_description;
     const [current_info, setInfo] = useState({name:"", phonenumber:"", description:""});
-    var token = JSON.parse(localStorage.getItem('user_data'));
     const [message, setMessage] = useState('');
     const handleClose = () => setShow(false);
     const[pic, setPic] = useState(null);
@@ -64,12 +66,12 @@ function ShowSettings({...props }) {
             // Fail to upload picture
             if (!res.success_bool)
             {
-                setMessage('fail to upload picture.');
+                setMessage('Failed to upload picture.');
             }
             // successfully setup profile
             else
             {
-                setMessage('');
+                setMessage('Successfully uploaded!');
                 var user = {email:token.email, is_group:token.is_group ,jwtToken:res.refreshed_token_str};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 
@@ -104,11 +106,12 @@ function ShowSettings({...props }) {
         if (pic != null)
             upload_pic();
     
-        var obj = {email_str:token.email,update_fields_obj:fields,access_token_str:token.jwtToken}; 
+        var obj = {email_str:token.email,update_fields_obj:fields,access_token_str:token.jwtToken};
+        
         var js = JSON.stringify(obj);
 
         try
-        {    
+        {
             const response = await fetch(api_path + 'api/update_profile',
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
@@ -255,8 +258,10 @@ function Home()
     const [person,setPerson] = useState(null);
     const [message, setMessage] = useState('');
     const [img, setImg] = useState(null);
+
     var card_loop = [];
-    for (let i = 0; i < 10; i++) {
+
+    for (let i = 0; i < 1; i++) {
         card_loop.push({id:i});
     }
 
@@ -270,13 +275,14 @@ function Home()
         
         var obj = {email_str:target,access_token_str:token.jwtToken};
         var js = JSON.stringify(obj);
-console.log(js); 
+        console.log(js); 
+        
         try
         {    
             const response = await fetch(api_path + 'api/get_profile_picture',{method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
             const res = await(response.blob());
             setImg(URL.createObjectURL(res));  
-console.log(img);              
+            console.log(img);              
         }
         catch(e)
         {
@@ -362,7 +368,7 @@ console.log(img);
 
             if (res.match_bool === true)
             {
-                setMessage("You get a new match!");
+                setMessage("You've got a new match!");
             }
                 
 
@@ -402,7 +408,7 @@ console.log(img);
     }
 
     return (
-        <Container fluid className="content">
+        <Container fluid className="content-special">
             <Row className="home-header">
                 <Col className="setiings-header">
                     {options.map((props, idx) => (
@@ -417,6 +423,11 @@ console.log(img);
                         <ShowMatchList key={idx} placement={'end'} {...props} />
                     ))}
                 </Col>
+            </Row>
+            <Row className="center-piece-head">	
+                <Col className="status-message">	
+                    <h4 className="pulse">{message}</h4>	
+                </Col>	
             </Row>
             <Row className="center-piece">
                 {card_loop.map((card) => person && 
@@ -434,8 +445,6 @@ console.log(img);
                 }
             </Row>
             <Row className="footer-buttons">
-                <h1>{message}</h1>
-
                 <Col sm={8} className="accept-reject">
                     <img className="reject-icon" src="./close.png" onClick={swipe_left}></img>
 
