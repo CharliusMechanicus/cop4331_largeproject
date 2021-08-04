@@ -171,7 +171,7 @@ export default function InitializeProfile()
 
                 <Modal.Body>
                     {showDescription ?
-                        <Row>
+                        <Row className="description-body">
                             <Col>
                                 <Row>
                                     <Col>
@@ -187,8 +187,8 @@ export default function InitializeProfile()
                             </Col>
                         </Row>
                         :
-                        <Row>
-                            <Col>
+                        <Row className="description-body">
+                            <Col className="description-alignment">
                                 <Row>
                                     <Col>
                                         <h5 className="option-header">Select any amount</h5>
