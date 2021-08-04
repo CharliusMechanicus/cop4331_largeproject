@@ -95,14 +95,14 @@ function SignUpModal() {
                   <Col className="selection-component">
                     <Row>
                       <Col>
-                        <p id="m-select">Members</p>
+                        <p id="p-select">Project</p>
                       </Col>
                       <Col>
                         <Switch 
                           className="signup-switch"
                           id="user-selection"
-                          onColor="#BF4342" 
-                          offColor="#FFA347"
+                          onColor="#FFA347" 
+                          offColor="#BF4342"
                           uncheckedIcon={false}
                           checkedIcon={false}
                           onChange={toIndividual} 
@@ -110,7 +110,7 @@ function SignUpModal() {
                         />
                       </Col>
                       <Col>
-                        <p id="p-select">Project</p>
+                        <p id="m-select">Members</p>
                       </Col>
                     </Row>
                   </Col>
