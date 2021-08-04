@@ -426,11 +426,9 @@ console.log(img);
                         preventSwipe={['up', 'down']}
                         >
                         <div className="card">
-                            <img src={img} />
-                            <h1>{person.name}</h1>	
-                            <h2>{person.phone}</h2>	
-                            <h2>{person.email}</h2>	
-                            <span>{person.description}</span><br/><br/>
+                            <h1 className="target-name">{person.name}</h1>
+                            <img src={img}/>
+                            <span className="target-description">{person.description}</span>
                         </div>
                     </TinderCard>)
                 }
