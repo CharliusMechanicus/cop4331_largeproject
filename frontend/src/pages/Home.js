@@ -232,7 +232,7 @@ function ShowMatchList({...props }) {
                 <Container className="matchlist-block">
                     <ListGroup className="match-user" variant="flush">
                         {match_list && match_list.map((list) =>
-                            <ListGroup.Item>
+                            <ListGroup.Item key={list.name}>
                                 <span className='match_list_name'>{list.display_name_str}</span>
                                 <br/>
                                 <span className='match_list_email'>{list.email_str}</span>
