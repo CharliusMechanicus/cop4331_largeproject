@@ -147,28 +147,31 @@ function ShowSettings({...props }) {
             <Offcanvas.Body>
                 <Container fluid className="settings-block">
                     <Row className="settings-content">
-                        <Row className="input-block">
-                            <h3>Name:</h3>
+                        <Col className="input-block">
+                            <h3>Name: <span>{current_info.name}</span></h3>
 
-                            <input type="text" id="update_name" placeholder={current_info.name} ref={(c) => update_name = c}></input>
-                        </Row>
-                        <Row className="input-block">
-                            <h3>Phone Number: </h3>
+                            <input type="text" id="update_name" placeholder="Name" ref={(c) => update_name = c}></input>
+                        </Col>
+                        <Col className="input-block">
+                            <h3>Phone Number: <br/><span>{current_info.phonenumber}</span></h3>
 
-                            <input type="tel" id="update_phonenumber" placeholder={current_info.phonenumber} ref={(c) => update_phonenumber = c}></input>
-                        </Row>
-                        <Row className="input-block">
-                            <h3>Description</h3>
+                            <input type="tel" id="update_phonenumber" placeholder="Phone" ref={(c) => update_phonenumber = c}></input>
+                        </Col>
+                        <Col className="input-block">
+                            <h3>Description:</h3>
                             
+                            <span className="display-description">{current_info.description}</span>
+
                             <textarea className="description-h" id="update_description" rows="5" cols="40" placeholder={current_info.description} ref={(c) => update_description = c}>
                             </textarea>
-                        </Row>
-                        <Row >
-                            <h3>Picture Upload</h3>                            
+                        </Col>
+                        <Col className="input-block">
+                            <h3>Picture Upload</h3>
                             <form encType="multipart/form-data">
-                                <input type="file" name="fileName" accept="image/png, image/jpeg" onChange={thispic => setPic(thispic.target.files[0])}></input><br/>
+                                <input id="img-upload-btn" type="file" name="fileName" accept="image/png, image/jpeg" onChange={thispic => setPic(thispic.target.files[0])}></input>
                             </form>
-                        </Row>
+                            <span className="img-message">{message}</span>
+                        </Col>
                     </Row>
 
                     <Row className="btn-group">
